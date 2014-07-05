@@ -1,0 +1,99 @@
+<!doctype html>
+<html ng-app="myApp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <title></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/public/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/public/custom/css/style.css" rel="stylesheet">
+
+<!-- Check for js enabled -->
+    <noscript>
+        <style>
+            .noscript-hide{
+                display:none;
+            }
+        </style>
+    </noscript>
+
+    <!-- Custom styles for this template -->
+
+    <script src="/public/vendor/jquery/jquery.js"></script>
+    <script src="/public/vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="/public/vendor/angular/angular.js"></script>
+    <script src="/public/vendor/angular-encode-uri/angular-encode-uri.min.js"></script>
+    <script type="text/javascript">
+      var myApp = angular.module('myApp', ['rt.encodeuri'], function ($interpolateProvider) {
+          $interpolateProvider.startSymbol('[[');
+          $interpolateProvider.endSymbol(']]');
+      });
+
+      myApp.filter('createAnchors', function ($sce) {
+        return function (str) {
+          //TODO make sure this is safe to use raw
+          return $sce.trustAsHtml(str.
+            replace(/</g, '&lt;').
+            replace(/>/g, '&gt;').
+            replace(/(https?:\/\/)?([^\s]+\.(com|net|ca|us|org|co)[^\s]*)/g, '<a href="http://$2">$2</a>').
+            replace(/\s@([^\s]+)/g, '<a href="http://twitter.com/$1">@$1</a>')
+           );
+        }
+      })
+    </script>
+    {% block css %}{% endblock %}
+  </head>
+
+  <body>
+    <noscript>
+        <h1 style="margin-top:0px;text-align:center;font-weight:900;color:#8BD9E8;font-size:4em">&bull; Sorry &bull;</h1>
+        <h1 style="margin-top:0px;text-align:center;font-weight:900;color:#8BD9E8;font-size:2em">Please enable javascript to use this website.</h1>
+    </noscript>
+    <div class="noscript-hide">
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container-wide">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">TITLE <i style="font-size:1.0em" class="glyphicon glyphicon-tint"></i></a>
+        </div>
+        <div class="navbar-collapse collapse">
+        	<ul class="nav navbar-nav">
+            <li class="active"><a href="/browse">ONE</a></li>
+            <li class="active"><a href="/create">TWO</a></li>
+            {% if email %}
+            <li class="active"><a href="/dashboard">Dashboard</a></li>
+            {% endif %}
+          </ul>
+          <!--<ul class="nav navbar-nav navbar-right">
+            {% if email %}
+              <li class="dropdown">
+                <a href="/dashboard"><i style="font-size:1.0em" class="fa fa-user"></i> {{email}}</b></a>
+              </li>
+              <li class="active"><a href="/logout">Logout</a></li>
+            {% else %}
+              <li class="active"><a href="/login">Login / Sign Up</a></li>
+            {% endif %}
+          </ul>-->
+        </div>
+      </div>
+    </div>
+
+    <div id="errorDiv" class="alert alert-warning" style="display: none">Error: <span id="errorMsg"></span></div>
+
+    {% block body %}{% endblock %}
+    
+    {% block script %}{% endblock %}
+    </div>
+  </body>
+</html>

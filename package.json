@@ -1,0 +1,37 @@
+{
+	"name": "",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+	    "node": "v0.11.x",
+	    "npm":  "1.3.x"
+  	},
+	"private": true,
+	"dependencies": {
+		"koa-json-response": "x.x",
+		"socket.io": "x.x",
+		"sequelize": "x.x",
+		"request": "x.x",
+		"thunkify": "x.x",
+		"co": "x.x",
+		"nodemailer": "x.x",
+		"underscore": "x.x",
+		"mysql": "x.x",
+		"co-views": "x.x",
+		"co-body": "x.x",
+		"koa": "x.x",
+		"koa-logger": "x.x",
+		"koa-route": "x.x",
+		"koa-router": "x.x",
+		"koa-static": "x.x",
+		"koa-session": "x.x",
+		"swig": "x.x",
+		"bcryptjs": "x.x",
+		"save-to": "x.x",
+		"co-fs": "x.x",
+		"co-busboy": "x.x",
+		"koa-send": "x.x",
+		"stripe": "x.x"
+	},
+	"testing": "mocha"
+}

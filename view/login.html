@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+{% block body %}
+	
+	<div class="container-wide">
+		<div class="row centered mt grid">
+			<div class="mt"></div>
+			<div class="col-lg-6">
+				<h1>Account Creation</h1>
+				<div style="display:inline-block;max-width:500px;width:100%;padding:50px;" id="green">
+				<form id="createAccount" class="form-horizontal" role="form">
+				  <div class="form-group">
+				    <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+				    <div class="col-sm-9">
+				      <input name="email" type="email" class="form-control" id="inputEmail3" placeholder="Email">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+				    <div class="col-sm-9">
+				      <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <div class="checkbox">
+				        <label>
+				          <!--<input name="remember" type="checkbox"> Remember me-->
+				        </label>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default">Create Account</button>
+				    </div>
+				  </div>
+				</form>
+			</div>
+			</div>
+			<div class="col-lg-6">
+				<h1>Login</h1>
+				<div style="display:inline-block;max-width:500px;width:100%;padding:50px;" id="green">
+				<form id="login" class="form-horizontal" role="form">
+				  <div class="form-group">
+				    <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+				    <div class="col-sm-9">
+				      <input name="email" type="email" class="form-control" id="inputEmail3" placeholder="Email">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+				    <div class="col-sm-9">
+				      <input name="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <div class="checkbox">
+				        <label>
+				          <!--<input name="remember" type="checkbox"> Remember me-->
+				        </label>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default">Sign in</button>
+				    </div>
+				  </div>
+				</form>
+			</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+function showError(msg){
+	$("#errorDiv").show();
+	$("#errorMsg").html(msg);
+}
+
+var submitting = 0;
+$("#createAccount").submit(function() {
+	if(!submitting){
+		submitting=1;
+		$.ajax({
+	     type: "POST",
+	     url: "/api/createAccount",
+	     data: $("#createAccount").serialize(), 
+	     success: function(data)
+	     {
+	        window.location.replace(redirect || "/");
+	     },
+	     error: function(XMLHttpRequest, textStatus, errorThrown) {
+	     		submitting=0;
+	     		var errMsg = $.parseJSON(XMLHttpRequest.responseText).data.message
+	     		showError(errMsg)
+	     } 
+	   });
+	}
+return false; 
+});
+
+$("#login").submit(function() {
+	if(!submitting){
+	submitting=1;
+		$.ajax({
+	     type: "POST",
+	     url: "/api/login",
+	     data: $("#login").serialize(), 
+	     success: function(data)
+	     {
+	        window.location.replace(redirect || "/");
+	     },
+	     error: function(XMLHttpRequest, textStatus, errorThrown) {
+	     		submitting=0;
+	     		var errMsg = $.parseJSON(XMLHttpRequest.responseText).data.message
+	     		showError(errMsg)
+	     } 
+	  });
+	}
+return false; 
+});
+
+function getURLParameter(name) {
+	var ret = decodeURIComponent((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]);
+  return ret == "null" ? null : ret;
+}
+
+errMsg = getURLParameter("message")
+redirect = getURLParameter("redirect")
+if(errMsg){
+	showError(errMsg)
+}
+
+</script>
+{% endblock %}
