@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div style="padding:20px;">
+  <div id='calendar'></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function homeCtrl($scope, $http) {
+	$scope.project = ["Hello", "World", "!"];
+}
+</script>
+
+<script>
+  $(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $('#calendar').fullCalendar({
+        // put your options and callbacks here
+    })
+
+});
+</script>
+{% endblock %}

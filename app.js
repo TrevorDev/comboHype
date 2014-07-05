@@ -1,5 +1,5 @@
 var config = require('./lib/config')
-var database = require('./lib/database')
+//var database = require('./lib/database')
 var logger = require('koa-logger')
 var router = require('koa-router')
 var serve = require('koa-static')
@@ -32,6 +32,7 @@ app.use(router(app))
 
 //PAGE ROUTES
 app.get('/', defaultPageLoad('index'))
+app.get('/calendarExample.html', defaultPageLoad('calendarExample.html'))
 app.get('/public/*', serve('.'))
 
 //API ROUTES
