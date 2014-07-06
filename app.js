@@ -1,5 +1,6 @@
 var config = require('./lib/config')
 var database = require('./lib/database')
+var sequelease = require('./lib/sequelease')
 var logger = require('koa-logger')
 var router = require('koa-router')
 var serve = require('koa-static')
@@ -20,6 +21,7 @@ si = database.getSequelizeInstance()
 si.sync()
 
 var eventCtrl = require('./controller/event')
+var eventModel = require('./model/event')
 
 //REMOVE IN PRODUCTION??
 swig.setDefaults(config.templateOptions)
@@ -36,7 +38,10 @@ app.get('/calendarExample.html', defaultPageLoad('calendarExample.html'))
 app.get('/public/*', serve('.'))
 
 //API ROUTES
-//app.get('/testUser', userCtrl.getUsers)
+app.post('/api/event', sequelease.create(eventModel))
+app.get('/api/event/search', sequelease.where(eventModel))
+app.get('/api/event/:id', sequelease.get(eventModel))
+
 
 //PAGE HANDLERS
 function defaultPageLoad(pageName, requiresLogin) {
