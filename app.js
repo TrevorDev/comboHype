@@ -1,5 +1,5 @@
 var config = require('./lib/config')
-//var database = require('./lib/database')
+var database = require('./lib/database')
 var logger = require('koa-logger')
 var router = require('koa-router')
 var serve = require('koa-static')
@@ -16,10 +16,10 @@ var fs = require('fs')
 var app = koa()
 
 //Add database
-// si = database.getSequelizeInstance()
-//si.sync()
+si = database.getSequelizeInstance()
+si.sync()
 
-var userCtrl = require('./controller/user')
+var eventCtrl = require('./controller/event')
 
 //REMOVE IN PRODUCTION??
 swig.setDefaults(config.templateOptions)
@@ -58,13 +58,13 @@ function render(page, template){
 var server = http.createServer(app.callback())
 
 //SOCKETIO
-var io = require('socket.io').listen(server);
+/*var io = require('socket.io').listen(server);
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 });
-
+*/
 server.listen(config.appPort);
 console.log('Started ----------------------------------------------'+config.appPort)
