@@ -33,6 +33,7 @@
     <script src="/public/vendor/angular-encode-uri/angular-encode-uri.min.js"></script>
     <script src="/public/vendor/fullcalendar/moment.min.js"></script>
     <script src="/public/vendor/fullcalendar/fullcalendar.min.js"></script>
+    <script src="/public/vendor/twitch/twitch-api.js"></script>
     <script type="text/javascript">
       var myApp = angular.module('myApp', ['rt.encodeuri'], function ($interpolateProvider) {
           $interpolateProvider.startSymbol('[[');
@@ -73,7 +74,7 @@
         <div class="navbar-collapse collapse">
         	<ul class="nav navbar-nav">
             <li class="active"><a href="/calendarExample.html">Calendar Example</a></li>
-            <li class="active"><a href="/create">TWO</a></li>
+            <li class="active"><a href="/twitch.html">Twitch</a></li>
             {% if email %}
             <li class="active"><a href="/dashboard">Dashboard</a></li>
             {% endif %}
