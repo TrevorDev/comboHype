@@ -8,6 +8,7 @@ var Event = si.define('Event',
 	  startTime: sequelize.DATE,
 	  endTime: sequelize.DATE,
 	  streamUrl: sequelize.STRING(2048),
+	  gameName: sequelize.STRING(2048),
 	  description: sequelize.STRING(2048)
 	}, {
 		classMethods: {

@@ -17,7 +17,7 @@
 	<div>
 	<h1>Coming Up Events:</h1>
 	<div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
-		[[item.date.toString()]]:  [[item.name]] - [[item.game]]
+		[[item.startTime.toString()]]:  [[item.name]]
 	</div>
 	</div>
 	</div>
@@ -31,12 +31,21 @@ function homeCtrl($scope, $http) {
 		this.name = name;
 		this.link = link;
 		this.game = game;
-		this.date = date;
+		this.startTime = date;
+		this.endTime = date;
 	}
 
 	$scope.currentEvents = [new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0))];
 
-	$scope.upcomingEvents = $scope.currentEvents;
+	$scope.upcomingEvents = [];
+
+	var currentDate = new Date();
+	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&maxDate='+currentDate.getTime()).
+		    success(function(resp, status, headers, config) {
+		    	$scope.upcomingEvents = resp.data.results
+		    }).
+		    	error(function(data, status, headers, config) {
+		    });
 
 	getTopGameStream(false, function(twitchPlayer) {
       $("#twitchContainer").append(twitchPlayer);
