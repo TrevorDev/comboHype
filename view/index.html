@@ -1,9 +1,25 @@
 {% extends 'layout.html' %}
 {% block body %}
 <div class="container-wide" ng-controller="homeCtrl">
-	<h1>HELLO WORLD!</h1>
-	<div ng-repeat="item in project">
-		[[item]]
+	<div class="row">
+		<div class="col-md-10">
+			<div id="twitchContainer" style="">
+			</div>
+		</div>
+		<div class="col-md-2" style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
+			
+			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
+				[[item.name]] - [[item.game]]
+			</div>
+		</div>
+	</div>
+	<div class="row">
+	<div>
+	<h1>Coming Up Events:</h1>
+	<div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
+		[[item.date.toString()]]:  [[item.name]] - [[item.game]]
+	</div>
+	</div>
 	</div>
 </div>
 {% endblock %}
@@ -11,12 +27,24 @@
 {% block script %}
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
-	$scope.project = ["Hello", "World", "!"];
-}
-</script>
+	function Event(name, link, game, date){
+		this.name = name;
+		this.link = link;
+		this.game = game;
+		this.date = date;
+	}
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  var socket = io();
+	$scope.currentEvents = [new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0))];
+
+	$scope.upcomingEvents = $scope.currentEvents;
+
+	getTopGameStream(false, function(twitchPlayer) {
+      $("#twitchContainer").append(twitchPlayer);
+    });
+
+    $('#calendar').fullCalendar({
+        // put your options and callbacks here
+    })
+}
 </script>
 {% endblock %}
