@@ -19,6 +19,11 @@
 	<div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
 		[[item.startTime.toString()]]:  [[item.name]]
 	</div>
+
+  <div id="calendar" style="padding:50px">
+
+  </div>
+
 	</div>
 	</div>
 </div>
@@ -52,8 +57,20 @@ function homeCtrl($scope, $http) {
     });
 
     $('#calendar').fullCalendar({
-        // put your options and callbacks here
-    })
+      dayClick: function() {
+          alert('a day has been clicked!');
+      },
+        events: [
+            {
+                title  : 'test event',
+                start  : '2014-07-07T13:15:30Z',
+                end    : '2014-07-07T15:19:30Z',
+                url    : 'http://www.google.com',
+                editable : false
+            }
+        ]
+
+    });
 }
 </script>
 {% endblock %}
