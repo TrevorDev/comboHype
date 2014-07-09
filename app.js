@@ -36,7 +36,7 @@ app.use(router(app))
 app.get('/', defaultPageLoad('index'))
 app.get('/calendarExample.html', defaultPageLoad('calendarExample.html'))
 app.get('/twitch.html', defaultPageLoad('twitch.html'))
-app.get('/public/*', serve('.'))
+app.get(/\/public\/*/, serve('.'))
 
 //API ROUTES
 app.post('/api/event', sequelease.create(eventModel))
