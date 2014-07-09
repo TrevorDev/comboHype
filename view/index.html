@@ -2,11 +2,11 @@
 {% block body %}
 <div class="container-wide" ng-controller="homeCtrl">
 	<div class="row">
-		<div class="col-md-10">
+		<div class="col-md-10" style="width:inherit">
 			<div id="twitchContainer" style="">
 			</div>
 		</div>
-		<div class="col-md-2" style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
+		<div style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
 			
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
 				[[item.name]] - [[item.game]]
