@@ -14,6 +14,7 @@ var https = require('https')
 var http = require('http')
 var request = require('request');
 var fs = require('fs')
+var cors = require('koa-cors')
 var app = koa()
 
 //Add database
@@ -30,6 +31,7 @@ swig.setDefaults(config.templateOptions)
 app.keys = [config.sessionSecret]
 app.use(session())
 app.use(jsonResp())
+app.use(cors())
 app.use(router(app))
 
 //PAGE ROUTES

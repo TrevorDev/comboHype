@@ -31,6 +31,7 @@
 		"co-fs": "x.x",
 		"co-busboy": "x.x",
 		"koa-send": "x.x",
+		"koa-cors": "x.x",
 		"stripe": "x.x"
 	},
 	"testing": "mocha"
