@@ -14,13 +14,16 @@
 		</div>
 	</div>
 	<div class="row">
+  <div id="streamDescription">
+    
+  </div>
 	<div>
-	<h1>Coming Up Events:</h1>
-	<div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
-		[[item.startTime.toString()]]:  [[item.name]]
-	</div>
+	  <h1>Coming Up Events:</h1>
+	  <div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
+		  [[item.startTime.toString()]]:  [[item.name]]
+	  </div>
 
-  <div id="calendar" style="padding:50px">
+    <div id="calendar" style="padding:50px">
 
   </div>
 
@@ -42,34 +45,70 @@ function homeCtrl($scope, $http) {
 
 	$scope.currentEvents = [new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0))];
 
-	$scope.upcomingEvents = [];
+	//$scope.upcomingEvents = [];
 
-	var currentDate = new Date();
+  // using a dictionary with id for events
+  $scope.events = new Object();
+
+	/*var currentDate = new Date();
 	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&maxDate='+currentDate.getTime()).
 		    success(function(resp, status, headers, config) {
 		    	$scope.upcomingEvents = resp.data.results
 		    }).
 		    	error(function(data, status, headers, config) {
-		    });
+		    });*/
 
 	getTopGameStream(false, function(twitchPlayer) {
       $("#twitchContainer").append(twitchPlayer);
     });
 
-    $('#calendar').fullCalendar({
-      dayClick: function() {
-          alert('a day has been clicked!');
-      },
-        events: [
-            {
-                title  : 'test event',
-                start  : '2014-07-07T13:15:30Z',
-                end    : '2014-07-07T15:19:30Z',
-                url    : 'http://www.google.com',
-                editable : false
-            }
-        ]
+    function addEventToCalendar(start, end, timezone, addEventCallback) {
+          var currentDate = new Date();
+          $.ajax( '/api/event/search?orderBy=id&sortOrder=DESC' )
+          .done(function(data) {
+            	var results = data.data.results;
+              var events = [];
+              for(var i=0; i < results.length; i++) {
+                  // store the event in the dictionary
+                  $scope.events[results[i].id] = results[i];
+                  // create the event object for the calendar
+                  events.push({
+                      id: results[i].id,
+                      title: results[i].gameName,
+                      url: "#" + results[i].id,
+                      start: new Date(results[i].startTime).toISOString(),
+                      end: new Date(results[i].endTime).toISOString() 
+                  });
+              }
+              // adds the events to the calendar
+              addEventCallback(events);
+          })
+          .fail(function() {
+              console.log( "error getting the latest events" );
+          });
+      }
 
+    var originalBackgroundColor = "rgb(58, 135, 173)";
+    var lastEventClicked = null;
+    $('#calendar').fullCalendar({
+        eventClick: function(calEvent, jsEvent, view) {
+ 
+            var channelName = getChannelName($scope.events[calEvent.id].streamUrl);
+            var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+            $("#twitchContainer").html(twitchPlayer);
+            $("#streamDescription").html([calEvent.id].description);
+
+            // scroll to the top
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+
+            // change the background color and reset the color for the last event
+            $(this).css('background-color', 'rgb(58, 200, 173)');
+            if(lastEventClicked != null) {
+              lastEventClicked.css('background-color', originalBackgroundColor);
+            }
+            lastEventClicked = $(this);
+        },
+        events: addEventToCalendar
     });
 }
 </script>

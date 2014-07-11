@@ -14,7 +14,7 @@ function getTopGameStream(playerType, callback) {
       var topGame = data.top[0].game.name;
       console.log(topGame);
       getChannelFromGame(playerType, topGame, function(name) {
-         callback(buildEmbedPlayer(playerType, name));
+         callback(buildEmbedPlayer(false, playerType, name));
       });
   })
  .fail(function() {
@@ -39,7 +39,16 @@ function getChannelFromGame(playerType, game, callback) {
   });
 }
 
-function buildEmbedPlayer(playerType, channel) {
+// get the channel name from a stream url
+function getChannelName(streamUrl) {
+  var splitUrl = streamUrl.split("/");
+  return splitUrl[splitUrl.length - 1];
+}
+
+// playerType determines whether it's Flash or HTML5
+// True : HTML5 (doesn't work? only works with safari?)
+// False : Flash
+function buildEmbedPlayer(autoplay, playerType, channel) {
   var twitchPlayer;
   if(playerType) {
     // HTML5 player
@@ -47,7 +56,7 @@ function buildEmbedPlayer(playerType, channel) {
   }
   else {
     // Flash player
-    twitchPlayer = "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel=hebo' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel=" + channel + "&auto_play=false&start_volume=25' /></object>"
+    twitchPlayer = "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel=hebo' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel=" + channel + "&auto_play=" + autoplay + "&start_volume=25' /></object>"
   }
   return twitchPlayer;
 }
