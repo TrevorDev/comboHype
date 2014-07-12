@@ -1,6 +1,29 @@
 /* Custom page CSS
 -------------------------------------------------- */
 
+.about-list {
+    text-align: center;
+    margin-left: 20%;
+}
+
+.about-list-item {
+    display: block;
+    text-align: left;
+}
+
+.about-list-icon {
+    color:#E88F1A;
+    padding-right:5px;
+    display:inline-block;
+    text-align:left;
+}
+
+.about-list-text {
+    display:inline-block;
+    font-size:large;
+}
+
+
 .container-wide {
     padding-left:20px;
     padding-right:20px;
