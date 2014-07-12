@@ -9,7 +9,7 @@
 		<div style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
 			
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				[[item.name]] - [[item.game]]
+				[[item.name]] - [[item.gameName]]
 			</div>
 		</div>
 	</div>
@@ -147,20 +147,19 @@ function homeCtrl($scope, $http) {
   $('#datetimepicker1').datetimepicker();
   $('#datetimepicker2').datetimepicker();
 
-	$scope.currentEvents = [new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)), new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0)),new Event("EVO", "twitch.com", "Melee", new Date(2014, 07, 11, 8, 30, 0, 0))];
+	$scope.currentEvents = [];
 
 	//$scope.upcomingEvents = [];
 
   // using a dictionary with id for events
-  $scope.events = new Object();
+  $scope.events = {};
 
-	/*var currentDate = new Date();
-	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&maxDate='+currentDate.getTime()).
+	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring='+new Date().getTime()).
 		    success(function(resp, status, headers, config) {
-		    	$scope.upcomingEvents = resp.data.results
+		    	$scope.currentEvents = resp.data.results
 		    }).
 		    	error(function(data, status, headers, config) {
-		    });*/
+		    });
 
 	getTopGameStream(false, function(twitchPlayer) {
       $("#twitchContainer").append(twitchPlayer);
