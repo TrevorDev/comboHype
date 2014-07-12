@@ -36,8 +36,7 @@ app.use(router(app))
 
 //PAGE ROUTES
 app.get('/', defaultPageLoad('index'))
-app.get('/calendarExample.html', defaultPageLoad('calendarExample.html'))
-app.get('/twitch.html', defaultPageLoad('twitch.html'))
+app.get('/about', defaultPageLoad('about'))
 app.get(/\/public\/*/, serve('.'))
 
 //API ROUTES
