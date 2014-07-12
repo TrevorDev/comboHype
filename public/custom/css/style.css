@@ -1,6 +1,9 @@
 /* Custom page CSS
 -------------------------------------------------- */
 
+/* Calendar day mouseover */
+.fc-content td:hover{background: #DFF3F5;}
+
 .about-list {
     text-align: center;
     margin-left: 20%;

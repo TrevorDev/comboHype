@@ -131,8 +131,22 @@ function homeCtrl($scope, $http) {
 		this.endTime = date;
 	}
 
-  var userTimezone = moment().zone() / 60;
+  Date.prototype.stdTimezoneOffset = function() {
+      var jan = new Date(this.getFullYear(), 0, 1);
+      var jul = new Date(this.getFullYear(), 6, 1);
+      return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+  }
+
+  Date.prototype.dst = function() {
+      return this.getTimezoneOffset() < this.stdTimezoneOffset();
+  }
+
+  var userTimezone = -moment().zone() / 60;
   var dropdownTimezone = document.getElementById("DropDownTimezone");
+
+  if (new Date().dst()) {
+    userTimezone = userTimezone - 1.0;
+  }
 
   for (i = 0; i< dropdownTimezone.options.length; i++)
   {
