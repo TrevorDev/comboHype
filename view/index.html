@@ -123,8 +123,8 @@ function homeCtrl($scope, $http) {
                       id: results[i].id,
                       title: results[i].gameName,
                       url: "#" + results[i].id,
-                      start: new Date(results[i].startTime).toISOString(),
-                      end: new Date(results[i].endTime).toISOString() 
+                      start: new Date(results[i].startTime).toString(),
+                      end: new Date(results[i].endTime).toString() 
                   });
               }
               // adds the events to the calendar
