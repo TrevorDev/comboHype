@@ -37,12 +37,12 @@
             <form id="submitEventForm" ng-submit="submitEvent()" role="form">
               <div class="form-group">
                 <label for="eventName">* Event Name</label>
-                <input type="text" class="form-control" id="eventName" placeholder="Super Awesome Tournament">
+                <input type="text" class="form-control" name="eventName" placeholder="Super Awesome Tournament">
               </div>
             <div class="form-group">
                 <label for="datetimepicker1">* Start Date</label>
                 <div class='input-group date' id='datetimepicker1' >
-                    <input type='text' class="form-control" />
+                    <input type='text' name="startDate" class="form-control" />
                     <span class="input-group-addon"><span class="fa fa-calendar"></span>
                     </span>
                 </div>
@@ -51,7 +51,7 @@
             <div class="form-group">
                 <label for="datetimepicker2">End Date</label>
                 <div class='input-group date' id='datetimepicker2'>
-                    <input type='text' class="form-control" />
+                    <input type='text' name="endDate" class="form-control" />
                     <span class="input-group-addon"><span class="fa fa-calendar"></span>
                     </span>
                 </div>
@@ -96,12 +96,12 @@
 
               <div class="form-group">
                 <label for="gameName">* Game</label>
-                <input type="text" class="form-control" id="gameName" placeholder="Super Awesome Game">
+                <input type="text" class="form-control" name="gameName" placeholder="Super Awesome Game">
               </div>
 
               <div class="form-group">
                 <label for="descriptionField">Description</label>
-                <textarea id="descriptionField" class="form-control" rows="3"></textarea>
+                <textarea name="descriptionField" class="form-control" rows="3"></textarea>
               </div>
               <button type="submit" class="btn btn-default">Add Event</button>
             </form>
@@ -123,8 +123,26 @@
 {% block script %}
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
+  function GameEvent(name, startTime, endTime, streamUrl, gameName, description){
+    this.name = name
+    this.startTime = new Date(startTime)
+    this.endTime = new Date(endTime)
+    this.streamUrl = streamUrl
+    this.gameName = gameName
+    this.description = description
+  }
+
+
   $scope.submitEvent = function(){
-    console.log($('#submitEventForm'))
+    var values = {};
+    $.each($('#submitEventForm').serializeArray(), function(i, field) {
+        values[field.name] = field.value;
+    });
+
+    console.log(values)
+    var game = new GameEvent(values.eventName, values.startDate, values.endDate, 'twitch.tv/srkevo1', values.gameName, values.descriptionField)
+    $http.post('/api/event', game);
+
   }
 
 	function Event(name, link, game, date){
