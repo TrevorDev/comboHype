@@ -240,6 +240,18 @@ function homeCtrl($scope, $http) {
       $('#addEventModal').modal('toggle');
 
     }
+  $('.item-events').live("click", function() {
+    alert('hi');
+    if(this.url != null) {
+      changeStreamEmbeded(this.url);
+    }
+    return true;
+  });
+}
+function changeStreamEmbeded(streamUrl) {
+  var channelName = getChannelName(streamUrl);
+  var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+  $("#twitchContainer").html(twitchPlayer);
 }
 </script>
 {% endblock %}
