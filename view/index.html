@@ -11,7 +11,7 @@
         <h4>Currently Live Events</h4>
       </div>
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				<a ng-click="changeStreamEmbeded('[[item.streamUrl]]')" >[[item.name]] - [[item.gameName]]</a>
+				<a ng-click="changeStreamEmbeded(item.streamUrl)" >[[item.name]] - [[item.gameName]]</a>
 			</div>
 		</div>
 	</div>
@@ -181,6 +181,13 @@ function homeCtrl($scope, $http) {
       $("#twitchContainer").append(twitchPlayer);
     });
 
+  $scope.changeStreamEmbeded = function(streamUrl) {
+    alert(streamUrl);
+    var channelName = getChannelName(streamUrl);
+    var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+    $("#twitchContainer").html(twitchPlayer);
+  }
+
     function addEventToCalendar(start, end, timezone, addEventCallback) {
           var currentDate = new Date();
           $.ajax( '/api/event/search?orderBy=id&sortOrder=DESC' )
@@ -217,7 +224,7 @@ function homeCtrl($scope, $http) {
             //alert('Current view: ' + view.name);
         },
         eventClick: function(calEvent, jsEvent, view) {
-            changeStreamEmbeded($scope.events[calEvent.id].streamUrl);
+            $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl);
 
 
             var description = [calEvent.id].description == null ? "": [calEvent.id].description;
@@ -241,10 +248,6 @@ function homeCtrl($scope, $http) {
 
     }
 }
-function changeStreamEmbeded(streamUrl) {
-  var channelName = getChannelName(streamUrl);
-  var twitchPlayer = buildEmbedPlayer(true, false, channelName);
-  $("#twitchContainer").html(twitchPlayer);
-}
+
 </script>
 {% endblock %}
