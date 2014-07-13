@@ -202,7 +202,6 @@ function homeCtrl($scope, $http) {
                   events.push({
                       id: results[i].id,
                       title: results[i].gameName,
-                      url: "#" + results[i].id,
                       start: new Date(results[i].startTime).toString(),
                       end: new Date(results[i].endTime).toString() 
                   });
