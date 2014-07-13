@@ -139,19 +139,12 @@ function homeCtrl($scope, $http) {
         values[field.name] = field.value;
     });
 
-    console.log(values)
+    //TODO adjust dates by difference of current timezone and DropDownTimezone and add url field
     var game = new GameEvent(values.eventName, values.startDate, values.endDate, 'twitch.tv/srkevo1', values.gameName, values.descriptionField)
     $http.post('/api/event', game);
-
+    showModal();
+    location.reload();
   }
-
-	function Event(name, link, game, date){
-		this.name = name;
-		this.link = link;
-		this.game = game;
-		this.startTime = date;
-		this.endTime = date;
-	}
 
   Date.prototype.stdTimezoneOffset = function() {
       var jan = new Date(this.getFullYear(), 0, 1);
