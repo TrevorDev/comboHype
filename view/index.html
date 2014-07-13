@@ -11,7 +11,7 @@
         <h4>Currently Live Events</h4>
       </div>
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				<a ng-click="changeStreamEmbeded(item.streamUrl)" >[[item.name]] - [[item.gameName]]</a>
+				<a ng-click="changeStreamEmbeded(item.streamUrl, item.description)" >[[item.name]] - [[item.gameName]]</a>
 			</div>
 		</div>
 	</div>
@@ -181,11 +181,12 @@ function homeCtrl($scope, $http) {
       $("#twitchContainer").append(twitchPlayer);
     });
 
-  $scope.changeStreamEmbeded = function(streamUrl) {
-    alert(streamUrl);
+  $scope.changeStreamEmbeded = function(streamUrl, description) {
     var channelName = getChannelName(streamUrl);
     var twitchPlayer = buildEmbedPlayer(true, false, channelName);
     $("#twitchContainer").html(twitchPlayer);
+    description = description == null ? "": description;
+    $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
   }
 
     function addEventToCalendar(start, end, timezone, addEventCallback) {
@@ -224,11 +225,7 @@ function homeCtrl($scope, $http) {
             //alert('Current view: ' + view.name);
         },
         eventClick: function(calEvent, jsEvent, view) {
-            $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl);
-
-
-            var description = [calEvent.id].description == null ? "": [calEvent.id].description;
-            $("#streamDescription").html("Stream: " + $scope.events[calEvent.id].streamUrl + "<br>" + description);
+            $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
 
             // scroll to the top
             $("html, body").animate({ scrollTop: 0 }, "slow");
