@@ -11,7 +11,7 @@
         <h4>Currently Live Events</h4>
       </div>
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				[[item.name]] - [[item.gameName]]
+				<a ng-click="changeStreamEmbeded('[[item.streamUrl]]')" >[[item.name]] - [[item.gameName]]</a>
 			</div>
 		</div>
 	</div>
@@ -217,10 +217,8 @@ function homeCtrl($scope, $http) {
             //alert('Current view: ' + view.name);
         },
         eventClick: function(calEvent, jsEvent, view) {
- 
-            var channelName = getChannelName($scope.events[calEvent.id].streamUrl);
-            var twitchPlayer = buildEmbedPlayer(true, false, channelName);
-            $("#twitchContainer").html(twitchPlayer);
+            changeStreamEmbeded($scope.events[calEvent.id].streamUrl);
+
 
             var description = [calEvent.id].description == null ? "": [calEvent.id].description;
             $("#streamDescription").html("Stream: " + $scope.events[calEvent.id].streamUrl + "<br>" + description);
@@ -242,6 +240,18 @@ function homeCtrl($scope, $http) {
       $('#addEventModal').modal('toggle');
 
     }
+    $('.item-events').live("click", function() {
+      alert('hi');
+      if(this.url != null) {
+        changeStreamEmbeded(this.url);
+      }
+      return true;
+    });
+}
+function changeStreamEmbeded(streamUrl) {
+  var channelName = getChannelName(streamUrl);
+  var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+  $("#twitchContainer").html(twitchPlayer);
 }
 </script>
 {% endblock %}
