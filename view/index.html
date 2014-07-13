@@ -11,7 +11,7 @@
         <h4>Currently Live Events</h4>
       </div>
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				[[item.name]] - [[item.gameName]]
+				<a href="/#[[item.id]]">[[item.name]] - [[item.gameName]]</a>
 			</div>
 		</div>
 	</div>
