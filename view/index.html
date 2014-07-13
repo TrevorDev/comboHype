@@ -11,7 +11,7 @@
         <h4>Currently Live Events</h4>
       </div>
 			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				<a ng-click="changeStreamEmbeded(item.streamUrl, item.description)" >[[item.name]] - [[item.gameName]]</a>
+				<a ng-click="changeStreamEmbeded(item.streamUrl, item.description)" >[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
 			</div>
 		</div>
 	</div>
@@ -100,6 +100,11 @@
               </div>
 
               <div class="form-group">
+                <label for="streamUrlField">Stream Address</label>
+                <input type="text" class="form-control" name="streamUrlField" placeholder="http://twitch.tv/bestchannel">
+              </div>
+
+              <div class="form-group">
                 <label for="descriptionField">Description</label>
                 <textarea name="descriptionField" class="form-control" rows="3"></textarea>
               </div>
@@ -175,8 +180,8 @@ function homeCtrl($scope, $http) {
   
   
 
-  $('#datetimepicker1').datetimepicker();
-  $('#datetimepicker2').datetimepicker();
+  var startDateField = $('#datetimepicker1').datetimepicker();
+  var endDateField = $('#datetimepicker2').datetimepicker();
 
 	$scope.currentEvents = [];
 
@@ -233,10 +238,8 @@ function homeCtrl($scope, $http) {
     var lastEventClicked = null;
     $('#calendar').fullCalendar({
         dayClick: function(date, jsEvent, view) {
-            showModal(date.format());
-
-            //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-            //alert('Current view: ' + view.name);
+            $('#datetimepicker1').data("DateTimePicker").setDate(date);
+            showModal();
         },
         eventClick: function(calEvent, jsEvent, view) {
             $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
