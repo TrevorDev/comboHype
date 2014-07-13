@@ -34,7 +34,7 @@
             <h4 class="modal-title" id="myModalLabel">Add Event to Calendar</h4>
           </div>
           <div class="modal-body">
-            <form role="form">
+            <form id="submitEventForm" ng-submit="submitEvent()" role="form">
               <div class="form-group">
                 <label for="eventName">* Event Name</label>
                 <input type="text" class="form-control" id="eventName" placeholder="Super Awesome Tournament">
@@ -123,6 +123,10 @@
 {% block script %}
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
+  $scope.submitEvent = function(){
+    console.log($('#submitEventForm'))
+  }
+
 	function Event(name, link, game, date){
 		this.name = name;
 		this.link = link;
