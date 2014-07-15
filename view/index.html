@@ -144,8 +144,15 @@ function homeCtrl($scope, $http) {
         values[field.name] = field.value;
     });
 
-    //TODO adjust dates by difference of current timezone and DropDownTimezone and add url field
-    var game = new GameEvent(values.eventName, values.startDate, values.endDate, 'twitch.tv/srkevo1', values.gameName, values.descriptionField)
+    var gmtOffset = -(new Date()).getTimezoneOffset()/60;
+    //ADD 1 FOR DAYLIGHT SAVINGS TODO FIX TO CHECK FOR DAYLIGHT SAVINGS
+    var diff = (values.DropDownTimezone - gmtOffset) + 1;
+
+    var game = new GameEvent(values.eventName, values.startDate, values.endDate, values.streamUrlField, values.gameName, values.descriptionField)
+
+
+    game.startTime.setHours(game.startTime.getHours()+diff);
+    game.endTime.setHours(game.endTime.getHours()+diff);
     $http.post('/api/event', game);
     showModal();
     location.reload();
