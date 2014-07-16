@@ -65,13 +65,24 @@ function render(page, template){
 var server = http.createServer(app.callback())
 
 //SOCKETIO
-/*var io = require('socket.io').listen(server);
+var bonusUsers = 627
+function randomizeBonusUsers() {
+	si.query('SELECT 1')
+	setTimeout(randomizeBonusUsers, 3000000) //50 min
+	bonusUsers+=5;
+}
+randomizeBonusUsers()
+
+var userCount = 0;
+var io = require('socket.io').listen(server);
 io.on('connection', function(socket){
-  console.log('a user connected');
+  userCount++;
+  io.emit('updateUserCount', {count: userCount + bonusUsers});
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+  	userCount--;
+  	io.emit('updateUserCount', {count: userCount + bonusUsers});
   });
 });
-*/
+
 server.listen(config.appPort);
 console.log('Started ----------------------------------------------'+config.appPort)

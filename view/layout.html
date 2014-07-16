@@ -65,6 +65,15 @@
         }
       })
     </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      socket.on('updateUserCount', function(data){
+        $('#userCount').html('Users Online: '+data.count);
+      });
+    </script>
+
     {% block css %}{% endblock %}
   </head>
 
@@ -102,6 +111,7 @@
               <li class="active"><a href="/login">Login / Sign Up</a></li>
             {% endif %}
           </ul>-->
+        <a class="navbar-brand" id="userCount" href="#">Users Online: 0</a>
         </div>
       </div>
     </div>
