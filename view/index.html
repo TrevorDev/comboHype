@@ -126,18 +126,17 @@
 {% endblock %}
 
 {% block script %}
+<script src="/public/custom/js/gameEvent.js"></script>
+<script src="/public/custom/js/dateHelper.js"></script>
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
-  function GameEvent(name, startTime, endTime, streamUrl, gameName, description){
-    this.name = name
-    this.startTime = new Date(startTime)
-    this.endTime = new Date(endTime)
-    this.streamUrl = streamUrl
-    this.gameName = gameName
-    this.description = description
-  }
+  // Events shown at top
+  $scope.currentEvents = [];
 
+  // using a dictionary with id for events
+  $scope.events = {};
 
+  //Stores a new event in the db
   $scope.submitEvent = function(){
     var values = {};
     $.each($('#submitEventForm').serializeArray(), function(i, field) {
@@ -158,6 +157,11 @@ function homeCtrl($scope, $http) {
     location.reload();
   }
 
+  //I DONT KNOW WHAT THIS DOES BUT COMMENTING IT OUT BREAKS STUFF
+  var startDateField = $('#datetimepicker1').datetimepicker();
+  var endDateField = $('#datetimepicker2').datetimepicker();
+
+  //TODO: I dont like altering prototypes make this a helper function instead
   Date.prototype.stdTimezoneOffset = function() {
       var jan = new Date(this.getFullYear(), 0, 1);
       var jul = new Date(this.getFullYear(), 6, 1);
@@ -184,18 +188,8 @@ function homeCtrl($scope, $http) {
       break;
     }
   }
-  
-  
 
-  var startDateField = $('#datetimepicker1').datetimepicker();
-  var endDateField = $('#datetimepicker2').datetimepicker();
-
-	$scope.currentEvents = [];
-
-	//$scope.upcomingEvents = [];
-
-  // using a dictionary with id for events
-  $scope.events = {};
+	
 
 	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring='+new Date().getTime()).
 		    success(function(resp, status, headers, config) {
