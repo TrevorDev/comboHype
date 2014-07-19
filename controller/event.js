@@ -11,6 +11,11 @@ exports.where = function * (params) {
 		}
 	}
 
+	if (params.gameName) {
+		console.log(params.gameName)
+		scope.gameName = {like: '%'+params.gameName+'%'}
+	}
+
 	if (params.maxDate) {
 		scope.endTime = {
 			lte: new Date(parseInt(params.maxDate))
