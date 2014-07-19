@@ -1,239 +1,238 @@
-{% extends 'layout.html' %}
-{% block body %}
+{% extends 'layout.html' %} {% block body %}
 <div class="container-wide" ng-controller="homeCtrl">
-	<div class="row">
-		<div class="col-md-10" style="width:inherit">
-			<div id="twitchContainer" style="width:920px;">
-			</div>
-		</div>
-		<div style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
-			<div class="well" style="width:100%;">
-        <h4>Currently Live Events</h4>
-      </div>
-			<div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-				<a ng-click="changeStreamEmbeded(item.streamUrl, item.description)" >[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-  <div id="streamDescription">
-    
-  </div>
-	<div>
-	  <h1>Coming Up Events:</h1>
-	  <div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
-		  [[item.startTime.toString()]]:  [[item.name]]
-	  </div>
-
-    <!-- Modal -->
-    <div class="modal fade" tabindex="-1" id="addEventModal" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add Event to Calendar</h4>
-          </div>
-          <div class="modal-body">
-            <form id="submitEventForm" ng-submit="submitEvent()" role="form">
-              <div class="form-group">
-                <label for="eventName">* Event Name</label>
-                <input type="text" class="form-control" name="eventName" placeholder="Super Awesome Tournament">
-              </div>
-            <div class="form-group">
-                <label for="datetimepicker1">* Start Date</label>
-                <div class='input-group date' id='datetimepicker1' >
-                    <input type='text' name="startDate" class="form-control" />
-                    <span class="input-group-addon"><span class="fa fa-calendar"></span>
-                    </span>
-                </div>
+    <div class="row">
+        <div class="col-md-10" style="width:inherit">
+            <div id="twitchContainer" style="width:920px;">
             </div>
-
-            <div class="form-group">
-                <label for="datetimepicker2">End Date</label>
-                <div class='input-group date' id='datetimepicker2'>
-                    <input type='text' name="endDate" class="form-control" />
-                    <span class="input-group-addon"><span class="fa fa-calendar"></span>
-                    </span>
-                </div>
-            </div>
-
-              <div class="form-group">
-                <label for="DropDownTimezone">Timezone</label>
-                <select name="DropDownTimezone" id="DropDownTimezone">
-                      <option value="-12.0">(GMT -12:00) Eniwetok, Kwajalein</option>
-                      <option value="-11.0">(GMT -11:00) Midway Island, Samoa</option>
-                      <option value="-10.0">(GMT -10:00) Hawaii</option>
-                      <option value="-9.0">(GMT -9:00) Alaska</option>
-                      <option value="-8.0">(GMT -8:00) Pacific Time (US &amp; Canada)</option>
-                      <option value="-7.0">(GMT -7:00) Mountain Time (US &amp; Canada)</option>
-                      <option value="-6.0">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
-                      <option value="-5.0">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
-                      <option value="-4.0">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
-                      <option value="-3.5">(GMT -3:30) Newfoundland</option>
-                      <option value="-3.0">(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
-                      <option value="-2.0">(GMT -2:00) Mid-Atlantic</option>
-                      <option value="-1.0">(GMT -1:00 hour) Azores, Cape Verde Islands</option>
-                      <option value="0.0">(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
-                      <option value="1.0">(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
-                      <option value="2.0">(GMT +2:00) Kaliningrad, South Africa</option>
-                      <option value="3.0">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
-                      <option value="3.5">(GMT +3:30) Tehran</option>
-                      <option value="4.0">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
-                      <option value="4.5">(GMT +4:30) Kabul</option>
-                      <option value="5.0">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
-                      <option value="5.5">(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</option>
-                      <option value="5.75">(GMT +5:45) Kathmandu</option>
-                      <option value="6.0">(GMT +6:00) Almaty, Dhaka, Colombo</option>
-                      <option value="7.0">(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
-                      <option value="8.0">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
-                      <option value="9.0">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
-                      <option value="9.5">(GMT +9:30) Adelaide, Darwin</option>
-                      <option value="10.0">(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
-                      <option value="11.0">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
-                      <option value="12.0">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="gameName">* Game</label>
-                <input type="text" class="form-control" name="gameName" placeholder="Super Awesome Game">
-              </div>
-
-              <div class="form-group">
-                <label for="streamUrlField">Stream Address</label>
-                <input type="text" class="form-control" name="streamUrlField" placeholder="http://twitch.tv/bestchannel">
-              </div>
-
-              <div class="form-group">
-                <label for="descriptionField">Description</label>
-                <textarea name="descriptionField" class="form-control" rows="3"></textarea>
-              </div>
-              <button type="submit" class="btn btn-default">Add Event</button>
-            </form>
-          </div>
         </div>
-      </div>
+        <div style="background-color:#DDDDDD;height:380px;overflow-y: auto;">
+            <div class="well" style="width:100%;">
+                <h4>Currently Live Events</h4>
+            </div>
+            <div class="well" style="width:100%;" ng-repeat="item in currentEvents">
+                <a ng-click="changeStreamEmbeded(item.streamUrl, item.description)">[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
+            </div>
+        </div>
     </div>
+    <div class="row">
+        <div id="streamDescription">
 
-    <!-- Calendar -->
-    <div id="calendar" style="padding:50px">
+        </div>
+        <div>
+            <h1>Coming Up Events:</h1>
+            <div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
+                [[item.startTime.toString()]]: [[item.name]]
+            </div>
 
-  </div>
+            <!-- Modal -->
+            <div class="modal fade" tabindex="-1" id="addEventModal" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">Add Event to Calendar</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form id="submitEventForm" ng-submit="submitEvent()" role="form">
+                                <div class="form-group">
+                                    <label for="eventName">* Event Name</label>
+                                    <input type="text" class="form-control" name="eventName" placeholder="Super Awesome Tournament">
+                                </div>
+                                <div class="form-group">
+                                    <label for="datetimepicker1">* Start Date</label>
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input type='text' name="startDate" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
 
-	</div>
-	</div>
+                                <div class="form-group">
+                                    <label for="datetimepicker2">End Date</label>
+                                    <div class='input-group date' id='datetimepicker2'>
+                                        <input type='text' name="endDate" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="DropDownTimezone">Timezone</label>
+                                    <select name="DropDownTimezone" id="DropDownTimezone">
+                                        <option value="-12.0">(GMT -12:00) Eniwetok, Kwajalein</option>
+                                        <option value="-11.0">(GMT -11:00) Midway Island, Samoa</option>
+                                        <option value="-10.0">(GMT -10:00) Hawaii</option>
+                                        <option value="-9.0">(GMT -9:00) Alaska</option>
+                                        <option value="-8.0">(GMT -8:00) Pacific Time (US &amp; Canada)</option>
+                                        <option value="-7.0">(GMT -7:00) Mountain Time (US &amp; Canada)</option>
+                                        <option value="-6.0">(GMT -6:00) Central Time (US &amp; Canada), Mexico City</option>
+                                        <option value="-5.0">(GMT -5:00) Eastern Time (US &amp; Canada), Bogota, Lima</option>
+                                        <option value="-4.0">(GMT -4:00) Atlantic Time (Canada), Caracas, La Paz</option>
+                                        <option value="-3.5">(GMT -3:30) Newfoundland</option>
+                                        <option value="-3.0">(GMT -3:00) Brazil, Buenos Aires, Georgetown</option>
+                                        <option value="-2.0">(GMT -2:00) Mid-Atlantic</option>
+                                        <option value="-1.0">(GMT -1:00 hour) Azores, Cape Verde Islands</option>
+                                        <option value="0.0">(GMT) Western Europe Time, London, Lisbon, Casablanca</option>
+                                        <option value="1.0">(GMT +1:00 hour) Brussels, Copenhagen, Madrid, Paris</option>
+                                        <option value="2.0">(GMT +2:00) Kaliningrad, South Africa</option>
+                                        <option value="3.0">(GMT +3:00) Baghdad, Riyadh, Moscow, St. Petersburg</option>
+                                        <option value="3.5">(GMT +3:30) Tehran</option>
+                                        <option value="4.0">(GMT +4:00) Abu Dhabi, Muscat, Baku, Tbilisi</option>
+                                        <option value="4.5">(GMT +4:30) Kabul</option>
+                                        <option value="5.0">(GMT +5:00) Ekaterinburg, Islamabad, Karachi, Tashkent</option>
+                                        <option value="5.5">(GMT +5:30) Bombay, Calcutta, Madras, New Delhi</option>
+                                        <option value="5.75">(GMT +5:45) Kathmandu</option>
+                                        <option value="6.0">(GMT +6:00) Almaty, Dhaka, Colombo</option>
+                                        <option value="7.0">(GMT +7:00) Bangkok, Hanoi, Jakarta</option>
+                                        <option value="8.0">(GMT +8:00) Beijing, Perth, Singapore, Hong Kong</option>
+                                        <option value="9.0">(GMT +9:00) Tokyo, Seoul, Osaka, Sapporo, Yakutsk</option>
+                                        <option value="9.5">(GMT +9:30) Adelaide, Darwin</option>
+                                        <option value="10.0">(GMT +10:00) Eastern Australia, Guam, Vladivostok</option>
+                                        <option value="11.0">(GMT +11:00) Magadan, Solomon Islands, New Caledonia</option>
+                                        <option value="12.0">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="gameName">* Game</label>
+                                    <input type="text" class="form-control" name="gameName" placeholder="Super Awesome Game">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="streamUrlField">Stream Address</label>
+                                    <input type="text" class="form-control" name="streamUrlField" placeholder="http://twitch.tv/bestchannel">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="descriptionField">Description</label>
+                                    <textarea name="descriptionField" class="form-control" rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-default">Add Event</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <div id="calendar" style="padding:50px">
+
+            </div>
+
+        </div>
+    </div>
 </div>
-{% endblock %}
-
-{% block script %}
+{% endblock %} {% block script %}
 <script src="/public/custom/js/gameEvent.js"></script>
 <script src="/public/custom/js/dateHelper.js"></script>
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
-  // Events shown at top
-  $scope.currentEvents = [];
+    // Events shown at top
+    $scope.currentEvents = [];
 
-  // using a dictionary with id for events
-  $scope.events = {};
+    // using a dictionary with id for events
+    $scope.events = {};
 
-  //Stores a new event in the db
-  $scope.submitEvent = function(){
-    var values = {};
-    $.each($('#submitEventForm').serializeArray(), function(i, field) {
-        values[field.name] = field.value;
-    });
+    //Stores a new event in the db
+    $scope.submitEvent = function() {
+        var values = {};
+        $.each($('#submitEventForm').serializeArray(), function(i, field) {
+            values[field.name] = field.value;
+        });
 
-    var gmtOffset = -(new Date()).getTimezoneOffset()/60;
-    //ADD 1 FOR DAYLIGHT SAVINGS TODO FIX TO CHECK FOR DAYLIGHT SAVINGS
-    var diff = (values.DropDownTimezone - gmtOffset) + 1;
+        var gmtOffset = -(new Date()).getTimezoneOffset() / 60;
+        //ADD 1 FOR DAYLIGHT SAVINGS TODO FIX TO CHECK FOR DAYLIGHT SAVINGS
+        var diff = (values.DropDownTimezone - gmtOffset) + 1;
 
-    var game = new GameEvent(values.eventName, values.startDate, values.endDate, values.streamUrlField, values.gameName, values.descriptionField)
+        var game = new GameEvent(values.eventName, values.startDate, values.endDate, values.streamUrlField, values.gameName, values.descriptionField)
 
 
-    game.startTime.setHours(game.startTime.getHours()+diff);
-    game.endTime.setHours(game.endTime.getHours()+diff);
-    $http.post('/api/event', game);
-    showModal();
-    location.reload();
-  }
-
-  //I DONT KNOW WHAT THIS DOES BUT COMMENTING IT OUT BREAKS STUFF
-  var startDateField = $('#datetimepicker1').datetimepicker();
-  var endDateField = $('#datetimepicker2').datetimepicker();
-
-  //TODO: I dont like altering prototypes make this a helper function instead
-  Date.prototype.stdTimezoneOffset = function() {
-      var jan = new Date(this.getFullYear(), 0, 1);
-      var jul = new Date(this.getFullYear(), 6, 1);
-      return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-  }
-
-  Date.prototype.dst = function() {
-      return this.getTimezoneOffset() < this.stdTimezoneOffset();
-  }
-
-  var userTimezone = -moment().zone() / 60;
-  var dropdownTimezone = document.getElementById("DropDownTimezone");
-
-  if (new Date().dst()) {
-    userTimezone = userTimezone - 1.0;
-  }
-
-  for (i = 0; i< dropdownTimezone.options.length; i++)
-  {
-    if (dropdownTimezone.options[i].value == userTimezone)
-    {
-      // Item is found. Set its property
-      dropdownTimezone.options[i].selected = true;
-      break;
+        game.startTime.setHours(game.startTime.getHours() + diff);
+        game.endTime.setHours(game.endTime.getHours() + diff);
+        $http.post('/api/event', game);
+        showModal();
+        location.reload();
     }
-  }
 
-	
+    //I DONT KNOW WHAT THIS DOES BUT COMMENTING IT OUT BREAKS STUFF
+    var startDateField = $('#datetimepicker1').datetimepicker();
+    var endDateField = $('#datetimepicker2').datetimepicker();
 
-	$http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring='+new Date().getTime()).
-		    success(function(resp, status, headers, config) {
-		    	$scope.currentEvents = resp.data.results
-		    }).
-		    	error(function(data, status, headers, config) {
-		    });
+    //TODO: I dont like altering prototypes make this a helper function instead
+    Date.prototype.stdTimezoneOffset = function() {
+        var jan = new Date(this.getFullYear(), 0, 1);
+        var jul = new Date(this.getFullYear(), 6, 1);
+        return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+    }
 
-	getTopGameStream(false, function(twitchPlayer) {
-      $("#twitchContainer").append(twitchPlayer);
+    Date.prototype.dst = function() {
+        return this.getTimezoneOffset() < this.stdTimezoneOffset();
+    }
+
+    var userTimezone = -moment().zone() / 60;
+    var dropdownTimezone = document.getElementById("DropDownTimezone");
+
+    if (new Date().dst()) {
+        userTimezone = userTimezone - 1.0;
+    }
+
+    for (i = 0; i < dropdownTimezone.options.length; i++) {
+        if (dropdownTimezone.options[i].value == userTimezone) {
+            // Item is found. Set its property
+            dropdownTimezone.options[i].selected = true;
+            break;
+        }
+    }
+
+
+
+    $http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring=' + new Date().getTime()).
+    success(function(resp, status, headers, config) {
+        $scope.currentEvents = resp.data.results
+    }).
+    error(function(data, status, headers, config) {});
+
+    getTopGameStream(false, function(twitchPlayer) {
+        $("#twitchContainer").append(twitchPlayer);
     });
 
-  $scope.changeStreamEmbeded = function(streamUrl, description) {
-    var channelName = getChannelName(streamUrl);
-    var twitchPlayer = buildEmbedPlayer(true, false, channelName);
-    $("#twitchContainer").html(twitchPlayer);
-    description = description == null ? "": description;
-    $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
-  }
+    $scope.changeStreamEmbeded = function(streamUrl, description) {
+        var channelName = getChannelName(streamUrl);
+        var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+        $("#twitchContainer").html(twitchPlayer);
+        description = description == null ? "" : description;
+        $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
+    }
 
     function addEventToCalendar(start, end, timezone, addEventCallback) {
-          var currentDate = new Date();
-          $.ajax( '/api/event/search?orderBy=id&sortOrder=DESC' )
-          .done(function(data) {
-            	var results = data.data.results;
-              var events = [];
-              for(var i=0; i < results.length; i++) {
-                  // store the event in the dictionary
-                  $scope.events[results[i].id] = results[i];
-                  // create the event object for the calendar
-                  events.push({
-                      id: results[i].id,
-                      title: results[i].gameName,
-                      start: new Date(results[i].startTime).toString(),
-                      end: new Date(results[i].endTime).toString() 
-                  });
-              }
-              // adds the events to the calendar
-              addEventCallback(events);
-          })
-          .fail(function() {
-              console.log( "error getting the latest events" );
-          });
-      }
+        var currentDate = new Date();
+        $.ajax('/api/event/search?orderBy=id&sortOrder=DESC')
+            .done(function(data) {
+                var results = data.data.results;
+                var events = [];
+                for (var i = 0; i < results.length; i++) {
+                    // store the event in the dictionary
+                    $scope.events[results[i].id] = results[i];
+                    // create the event object for the calendar
+                    events.push({
+                        id: results[i].id,
+                        title: results[i].gameName,
+                        start: new Date(results[i].startTime).toString(),
+                        end: new Date(results[i].endTime).toString()
+                    });
+                }
+                // adds the events to the calendar
+                addEventCallback(events);
+            })
+            .fail(function() {
+                console.log("error getting the latest events");
+            });
+    }
 
     var originalBackgroundColor = "rgb(58, 135, 173)";
     var lastEventClicked = null;
@@ -246,12 +245,14 @@ function homeCtrl($scope, $http) {
             $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
 
             // scroll to the top
-            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("html, body").animate({
+                scrollTop: 0
+            }, "slow");
 
             // change the background color and reset the color for the last event
             $(this).css('background-color', 'rgb(58, 200, 173)');
-            if(lastEventClicked != null) {
-              lastEventClicked.css('background-color', originalBackgroundColor);
+            if (lastEventClicked != null) {
+                lastEventClicked.css('background-color', originalBackgroundColor);
             }
             lastEventClicked = $(this);
         },
@@ -259,7 +260,7 @@ function homeCtrl($scope, $http) {
     });
 
     function showModal() {
-      $('#addEventModal').modal('toggle');
+        $('#addEventModal').modal('toggle');
 
     }
 }

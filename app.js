@@ -47,7 +47,7 @@ app.get('/api/event/:id', sequelease.get(eventModel, eventCtrl.get))
 
 //PAGE HANDLERS
 function defaultPageLoad(pageName, requiresLogin) {
-	return function *(){
+	return function * () {
 		/*if(requiresLogin===true && !sessionHelper.isLoggedIn(this.session)){
 			this.redirect('/login')
 			return
@@ -58,7 +58,7 @@ function defaultPageLoad(pageName, requiresLogin) {
 	}
 }
 
-function render(page, template){
+function render(page, template) {
 	return views(__dirname + '/view', config.templateOptions)(page, template)
 }
 
@@ -66,23 +66,28 @@ var server = http.createServer(app.callback())
 
 //SOCKETIO
 var bonusUsers = 627
+
 function randomizeBonusUsers() {
 	si.query('SELECT 1')
 	setTimeout(randomizeBonusUsers, 3000000) //50 min
-	bonusUsers+=5;
+	bonusUsers += 5;
 }
 randomizeBonusUsers()
 
 var userCount = 0;
 var io = require('socket.io').listen(server);
-io.on('connection', function(socket){
-  userCount++;
-  io.emit('updateUserCount', {count: userCount + bonusUsers});
-  socket.on('disconnect', function(){
-  	userCount--;
-  	io.emit('updateUserCount', {count: userCount + bonusUsers});
-  });
+io.on('connection', function(socket) {
+	userCount++;
+	io.emit('updateUserCount', {
+		count: userCount + bonusUsers
+	});
+	socket.on('disconnect', function() {
+		userCount--;
+		io.emit('updateUserCount', {
+			count: userCount + bonusUsers
+		});
+	});
 });
 
 server.listen(config.appPort);
-console.log('Started ----------------------------------------------'+config.appPort)
+console.log('Started ----------------------------------------------' + config.appPort)
