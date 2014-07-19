@@ -42,7 +42,7 @@ app.get(/\/public\/*/, serve('.'))
 //API ROUTES
 app.post('/api/event', sequelease.create(eventModel))
 app.get('/api/event/search', sequelease.where(eventModel, eventCtrl.where))
-app.get('/api/event/:id', sequelease.get(eventModel))
+app.get('/api/event/:id', sequelease.get(eventModel, eventCtrl.get))
 
 
 //PAGE HANDLERS
