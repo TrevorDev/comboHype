@@ -20,7 +20,9 @@
         </div>
         <div>
             <h1>Coming Up Events:</h1>
-            <input type="text" id="gameFilter" placeholder="Filter by game">
+            <div class="form-group">
+                <input type="text" class="form-control" id="gameFilter" placeholder="Filter by game">
+            </div>
             <div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
                 [[item.startTime.toString()]]: [[item.name]]
             </div>
@@ -55,7 +57,7 @@
                                 <div class="form-group">
                                     <label for="datetimepicker2">End Date</label>
                                     <div class='input-group date' id='datetimepicker2'>
-                                        <input type='text' name="endDate" class="form-control" ng-model="endTime" ng-maxlength="50" >
+                                        <input type='text' name="endDate" class="form-control" ng-model="endTime" ng-maxlength="50">
                                         <span class="input-group-addon">
                                             <span class="fa fa-calendar"></span>
                                         </span>
@@ -133,6 +135,7 @@
 <script src="/public/custom/js/gameEvent.js"></script>
 <script src="/public/custom/js/dateHelper.js"></script>
 <script src="/public/vendor/jquery/jqueryTyping.js"></script>
+<script src="/public/vendor/jquery/jqueryTypeahead.js"></script>
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
     // Events shown at top
@@ -243,7 +246,7 @@ function homeCtrl($scope, $http) {
         dayClick: function(date, jsEvent, view) {
             $('#datetimepicker1').data("DateTimePicker").setDate(date);
             // trigger event for validation
-            $('#startDate').trigger( "change" );
+            $('#startDate').trigger("change");
             showModal();
         },
         eventClick: function(calEvent, jsEvent, view) {
@@ -264,13 +267,12 @@ function homeCtrl($scope, $http) {
         events: addEventToCalendar
     });
 
-    $('#gameFilter').typing({
-      stop: function (event, $elem) {
-          $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName='+$('#gameFilter').val()).
+    var updateCalender = function(gameName){
+      $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName=' + gameName).
             success(function(resp, status, headers, config) {
-              //console.log(resp.data.results)
+                //console.log(resp.data.results)
 
-              var results = resp.data.results;
+                var results = resp.data.results;
                 var events = [];
                 for (var i = 0; i < results.length; i++) {
                     // store the event in the dictionary
@@ -284,14 +286,54 @@ function homeCtrl($scope, $http) {
                     });
                 }
 
-              $('#calendar').fullCalendar('removeEvents');
-              $('#calendar').fullCalendar( 'addEventSource', events )
-              
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').fullCalendar('addEventSource', events)
+
             }).
             error(function(data, status, headers, config) {});
-      },
-      delay: 400
+    }
+
+    $('#gameFilter').typing({
+        stop: function(event, $elem) {
+            updateCalender($('#gameFilter').val());
+        },
+        delay: 400
     });
+
+    var substringMatcher = function(strs) {
+        return function findMatches(q, cb) {
+            var matches, substrRegex;
+            matches = [];
+            substrRegex = new RegExp(q, 'i');
+            $.each(strs, function(i, str) {
+                if (substrRegex.test(str)) {
+                    matches.push({
+                        value: str
+                    });
+                }
+            });
+            cb(matches);
+        };
+    };
+
+    var games = [
+        'Smash bros melee', 'Smash bros brawl', 'League of legends', 'Dota 2', 'Starcraft 2',
+        'Marvel vs Capcom 3', 'Street fighter 4', 'Counter strike go'
+    ];
+
+    $('#gameFilter').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 1
+    }, {
+        name: 'games',
+        displayKey: 'value',
+        source: substringMatcher(games)
+    });
+
+    $('#gameFilter').on('typeahead:selected', function() {
+        updateCalender($('#gameFilter').val());
+    })
 
     function showModal() {
         $('#addEventModal').modal('toggle');
