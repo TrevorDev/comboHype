@@ -20,6 +20,7 @@
         </div>
         <div>
             <h1>Coming Up Events:</h1>
+            <input type="text" id="gameFilter" placeholder="Filter by game">
             <div class="well" style="width:100%;" ng-repeat="item in upcomingEvents">
                 [[item.startTime.toString()]]: [[item.name]]
             </div>
@@ -131,6 +132,7 @@
 {% endblock %} {% block script %}
 <script src="/public/custom/js/gameEvent.js"></script>
 <script src="/public/custom/js/dateHelper.js"></script>
+<script src="/public/vendor/jquery/jqueryTyping.js"></script>
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
     // Events shown at top
@@ -258,6 +260,35 @@ function homeCtrl($scope, $http) {
             lastEventClicked = $(this);
         },
         events: addEventToCalendar
+    });
+
+    $('#gameFilter').typing({
+      stop: function (event, $elem) {
+          $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName='+$('#gameFilter').val()).
+            success(function(resp, status, headers, config) {
+              //console.log(resp.data.results)
+
+              var results = resp.data.results;
+                var events = [];
+                for (var i = 0; i < results.length; i++) {
+                    // store the event in the dictionary
+                    $scope.events[results[i].id] = results[i];
+                    // create the event object for the calendar
+                    events.push({
+                        id: results[i].id,
+                        title: results[i].gameName,
+                        start: new Date(results[i].startTime).toString(),
+                        end: new Date(results[i].endTime).toString()
+                    });
+                }
+
+              $('#calendar').fullCalendar('removeEvents');
+              $('#calendar').fullCalendar( 'addEventSource', events )
+              
+            }).
+            error(function(data, status, headers, config) {});
+      },
+      delay: 400
     });
 
     function showModal() {
