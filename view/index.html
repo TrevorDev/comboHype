@@ -273,9 +273,7 @@ function homeCtrl($scope, $http) {
         })
 
         new DropdownHandler($('#newEventGameName'), gameList, function() {
-
-          $scope.hiddenGameName = $('#newEventGameName').val();
-          //$('#hiddenGameName').
+          $('#hiddenGameName').val($('#newEventGameName').val());
           $('#hiddenGameName').trigger("change");
         })
     }
