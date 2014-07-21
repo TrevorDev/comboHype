@@ -1,6 +1,10 @@
 /* Custom page CSS
 -------------------------------------------------- */
 
+.navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    color: #000;
+}
+
 /* BOOTSTRAP DROPDOWN CSS */
 .tt-dropdown-menu {
   position: absolute;
