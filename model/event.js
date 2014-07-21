@@ -4,6 +4,7 @@ var si = database.getSequelizeInstance();
 
 var STATUS = {
 	ACTIVE: "ACTIVE",
+	DELETED: "DELETED",
 	PENDING_APPROVAL: "PENDING_APPROVAL"
 }
 
@@ -16,7 +17,7 @@ var Event = si.define('Event', {
 	description: sequelize.STRING(2048),
 	status: {
 		type: sequelize.ENUM,
-		values: [STATUS.ACTIVE, STATUS.PENDING_APPROVAL],
+		values: [STATUS.ACTIVE, STATUS.DELETED, STATUS.PENDING_APPROVAL],
 		defaultValue: STATUS.PENDING_APPROVAL
 	}
 }, {
