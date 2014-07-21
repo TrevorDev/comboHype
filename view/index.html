@@ -107,7 +107,8 @@
 
                                 <div class="form-group">
                                     <label for="gameName">* Game</label>
-                                    <input type="text" class="form-control" id="newEventGameName" name="gameName" ng-model="gameName" ng-maxlength="2048" placeholder="Super Awesome Game" required>
+                                    <input type="text" class="form-control" id="newEventGameName" name="gameName" ng-model="gameName" ng-maxlength="2048" placeholder="Super Awesome Game">
+                                    <input type="text" style="display: none;" id="hiddenGameName" ng-model="hiddenGameName" required>
                                     <p ng-show="submitEventForm.gameName.$error.minlength" class="help-block">Username is too short.</p>
                                 </div>
 
@@ -272,6 +273,10 @@ function homeCtrl($scope, $http) {
         })
 
         new DropdownHandler($('#newEventGameName'), gameList, function() {
+
+          $scope.hiddenGameName = $('#newEventGameName').val();
+          //$('#hiddenGameName').
+          $('#hiddenGameName').trigger("change");
         })
     }
 
