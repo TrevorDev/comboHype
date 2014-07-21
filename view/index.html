@@ -166,7 +166,7 @@ function homeCtrl($scope, $http) {
         game.endTime.setHours(game.endTime.getHours() + diff);
         $http.post('/api/event', game);
         $scope.showModal();
-        location.reload();
+        //location.reload();
     }
 
     $scope.changeStreamEmbeded = function(streamUrl, description) {
