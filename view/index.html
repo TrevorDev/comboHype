@@ -107,7 +107,7 @@
 
                                 <div class="form-group">
                                     <label for="gameName">* Game</label>
-                                    <input type="text" class="form-control" name="gameName" ng-model="gameName" ng-maxlength="2048" placeholder="Super Awesome Game" required>
+                                    <input type="text" class="form-control" id="newEventGameName" name="gameName" ng-model="gameName" ng-maxlength="2048" placeholder="Super Awesome Game" required>
                                     <p ng-show="submitEventForm.gameName.$error.minlength" class="help-block">Username is too short.</p>
                                 </div>
 
@@ -266,8 +266,12 @@ function homeCtrl($scope, $http) {
             'Smash bros melee', 'Smash bros brawl', 'League of legends', 'Dota 2', 'Starcraft 2',
             'Marvel vs Capcom 3', 'Street fighter 4', 'Counter strike go'
         ];
-        var dh = new DropdownHandler($('#gameFilter'), gameList, function() {
+        
+        new DropdownHandler($('#gameFilter'), gameList, function() {
             updateCalendar($('#gameFilter').val());
+        })
+
+        new DropdownHandler($('#newEventGameName'), gameList, function() {
         })
     }
 
