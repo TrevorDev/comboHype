@@ -65,8 +65,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="DropDownTimezone">Timezone</label>
-                                    <select name="DropDownTimezone" id="DropDownTimezone">
+                                    <label>Timezone</label>
+                                    <select name="dropDownTimezone" id="dropDownTimezone">
                                         <option value="-12.0">(GMT -12:00) Eniwetok, Kwajalein</option>
                                         <option value="-11.0">(GMT -11:00) Midway Island, Samoa</option>
                                         <option value="-10.0">(GMT -10:00) Hawaii</option>
@@ -136,6 +136,7 @@
 <script src="/public/custom/js/dateHelper.js"></script>
 <script src="/public/vendor/jquery/jqueryTyping.js"></script>
 <script src="/public/vendor/jquery/jqueryTypeahead.js"></script>
+<script src="/public/custom/js/dropdownHandler.js"></script>
 <script type="text/javascript">
 function homeCtrl($scope, $http) {
     // Events shown at top
@@ -152,60 +153,16 @@ function homeCtrl($scope, $http) {
         });
 
         var gmtOffset = -(new Date()).getTimezoneOffset() / 60;
-        //ADD 1 FOR DAYLIGHT SAVINGS TODO FIX TO CHECK FOR DAYLIGHT SAVINGS
-        var diff = (values.DropDownTimezone - gmtOffset) + 1;
+
+        var diff = (values.dropDownTimezone - gmtOffset) + (DateHelper.isDaylightTime() ? 1 : 0);
 
         var game = new GameEvent(values.eventName, values.startDate, values.endDate, values.streamUrlField, values.gameName, values.descriptionField)
-
-
         game.startTime.setHours(game.startTime.getHours() + diff);
         game.endTime.setHours(game.endTime.getHours() + diff);
         $http.post('/api/event', game);
-        showModal();
+        $scope.showModal();
         location.reload();
     }
-
-    //I DONT KNOW WHAT THIS DOES BUT COMMENTING IT OUT BREAKS STUFF
-    var startDateField = $('#datetimepicker1').datetimepicker();
-    var endDateField = $('#datetimepicker2').datetimepicker();
-
-    //TODO: I dont like altering prototypes make this a helper function instead
-    Date.prototype.stdTimezoneOffset = function() {
-        var jan = new Date(this.getFullYear(), 0, 1);
-        var jul = new Date(this.getFullYear(), 6, 1);
-        return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
-    }
-
-    Date.prototype.dst = function() {
-        return this.getTimezoneOffset() < this.stdTimezoneOffset();
-    }
-
-    var userTimezone = -moment().zone() / 60;
-    var dropdownTimezone = document.getElementById("DropDownTimezone");
-
-    if (new Date().dst()) {
-        userTimezone = userTimezone - 1.0;
-    }
-
-    for (i = 0; i < dropdownTimezone.options.length; i++) {
-        if (dropdownTimezone.options[i].value == userTimezone) {
-            // Item is found. Set its property
-            dropdownTimezone.options[i].selected = true;
-            break;
-        }
-    }
-
-
-
-    $http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring=' + new Date().getTime()).
-    success(function(resp, status, headers, config) {
-        $scope.currentEvents = resp.data.results
-    }).
-    error(function(data, status, headers, config) {});
-
-    getTopGameStream(false, function(twitchPlayer) {
-        $("#twitchContainer").append(twitchPlayer);
-    });
 
     $scope.changeStreamEmbeded = function(streamUrl, description) {
         var channelName = getChannelName(streamUrl);
@@ -215,130 +172,115 @@ function homeCtrl($scope, $http) {
         $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
     }
 
-    function addEventToCalendar(start, end, timezone, addEventCallback) {
-        var currentDate = new Date();
-        $.ajax('/api/event/search?orderBy=id&sortOrder=DESC')
-            .done(function(data) {
-                var results = data.data.results;
-                var events = [];
-                for (var i = 0; i < results.length; i++) {
-                    // store the event in the dictionary
-                    $scope.events[results[i].id] = results[i];
-                    // create the event object for the calendar
-                    events.push({
-                        id: results[i].id,
-                        title: results[i].gameName,
-                        start: new Date(results[i].startTime).toString(),
-                        end: new Date(results[i].endTime).toString()
-                    });
-                }
-                // adds the events to the calendar
-                addEventCallback(events);
-            })
-            .fail(function() {
-                console.log("error getting the latest events");
-            });
-    }
-
-    var originalBackgroundColor = "rgb(58, 135, 173)";
-    var lastEventClicked = null;
-    $('#calendar').fullCalendar({
-        dayClick: function(date, jsEvent, view) {
-            $('#datetimepicker1').data("DateTimePicker").setDate(date);
-            // trigger event for validation
-            $('#startDate').trigger("change");
-            showModal();
-        },
-        eventClick: function(calEvent, jsEvent, view) {
-            $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
-
-            // scroll to the top
-            $("html, body").animate({
-                scrollTop: 0
-            }, "slow");
-
-            // change the background color and reset the color for the last event
-            $(this).css('background-color', 'rgb(58, 200, 173)');
-            if (lastEventClicked != null) {
-                lastEventClicked.css('background-color', originalBackgroundColor);
-            }
-            lastEventClicked = $(this);
-        },
-        events: addEventToCalendar
-    });
-
-    var updateCalender = function(gameName){
-      $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName=' + gameName).
-            success(function(resp, status, headers, config) {
-                //console.log(resp.data.results)
-
-                var results = resp.data.results;
-                var events = [];
-                for (var i = 0; i < results.length; i++) {
-                    // store the event in the dictionary
-                    $scope.events[results[i].id] = results[i];
-                    // create the event object for the calendar
-                    events.push({
-                        id: results[i].id,
-                        title: results[i].gameName,
-                        start: new Date(results[i].startTime).toString(),
-                        end: new Date(results[i].endTime).toString()
-                    });
-                }
-
-                $('#calendar').fullCalendar('removeEvents');
-                $('#calendar').fullCalendar('addEventSource', events)
-
-            }).
-            error(function(data, status, headers, config) {});
-    }
-
-    $('#gameFilter').typing({
-        stop: function(event, $elem) {
-            updateCalender($('#gameFilter').val());
-        },
-        delay: 400
-    });
-
-    var substringMatcher = function(strs) {
-        return function findMatches(q, cb) {
-            var matches, substrRegex;
-            matches = [];
-            substrRegex = new RegExp(q, 'i');
-            $.each(strs, function(i, str) {
-                if (substrRegex.test(str)) {
-                    matches.push({
-                        value: str
-                    });
-                }
-            });
-            cb(matches);
-        };
-    };
-
-    var games = [
-        'Smash bros melee', 'Smash bros brawl', 'League of legends', 'Dota 2', 'Starcraft 2',
-        'Marvel vs Capcom 3', 'Street fighter 4', 'Counter strike go'
-    ];
-
-    $('#gameFilter').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1
-    }, {
-        name: 'games',
-        displayKey: 'value',
-        source: substringMatcher(games)
-    });
-
-    $('#gameFilter').on('typeahead:selected', function() {
-        updateCalender($('#gameFilter').val());
-    })
-
-    function showModal() {
+    $scope.showModal = function() {
         $('#addEventModal').modal('toggle');
-
     }
+
+    var updateCalendar = function(gameName) {
+        $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName=' + gameName).
+        success(function(resp, status, headers, config) {
+            //console.log(resp.data.results)
+
+            var results = resp.data.results;
+            var events = [];
+            $scope.events = {};
+            $.each(results, function(i, result) {
+                // store the event in the dictionary
+                $scope.events[result.id] = result;
+                // create the event object for the calendar
+                events.push({
+                    id: result.id,
+                    title: result.gameName,
+                    start: new Date(result.startTime).toString(),
+                    end: new Date(result.endTime).toString()
+                });
+            });
+
+            $('#calendar').fullCalendar('removeEvents');
+            $('#calendar').fullCalendar('addEventSource', events)
+
+        }).
+        error(function(data, status, headers, config) {});
+    }
+
+    var initDropdownTimezone = function() {
+        var userTimezone = -moment().zone() / 60;
+        var dropdownTimezone = document.getElementById("dropDownTimezone");
+
+        if (DateHelper.isDaylightTime()) {
+            userTimezone = userTimezone - 1.0;
+        }
+
+        $.each(dropdownTimezone.options, function(i, option) {
+            if (option.value == userTimezone) {
+                option.selected = true
+                return false
+            }
+        });
+    }
+
+    var initCurrentEvents = function() {
+        $http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring=' + new Date().getTime()).
+        success(function(resp, status, headers, config) {
+            $scope.currentEvents = resp.data.results
+        }).
+        error(function(data, status, headers, config) {})
+    }
+
+    var initCalendar = function() {
+        var originalBackgroundColor = "rgb(58, 135, 173)";
+        var lastEventClicked = null;
+        $('#calendar').fullCalendar({
+            dayClick: function(date, jsEvent, view) {
+                $('#datetimepicker1').data("DateTimePicker").setDate(date);
+                // trigger event for validation
+                $('#startDate').trigger("change");
+                $scope.showModal();
+            },
+            eventClick: function(calEvent, jsEvent, view) {
+                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
+
+                // scroll to the top
+                $("html, body").animate({
+                    scrollTop: 0
+                }, "slow");
+
+                // change the background color and reset the color for the last event
+                $(this).css('background-color', 'rgb(58, 200, 173)');
+                if (lastEventClicked != null) {
+                    lastEventClicked.css('background-color', originalBackgroundColor);
+                }
+                lastEventClicked = $(this);
+            }
+        });
+        updateCalendar("")
+    }
+
+
+    var initDropdownGameFilter = function() {
+        var gameList = [
+            'Smash bros melee', 'Smash bros brawl', 'League of legends', 'Dota 2', 'Starcraft 2',
+            'Marvel vs Capcom 3', 'Street fighter 4', 'Counter strike go'
+        ];
+        var dh = new DropdownHandler($('#gameFilter'), gameList, function() {
+            updateCalendar($('#gameFilter').val());
+        })
+    }
+
+    //MAIN ----------------------------------------------------------------------------
+    initDropdownTimezone()
+    initCurrentEvents()
+    initCalendar()
+    initDropdownGameFilter();
+
+    //init game stream
+    getTopGameStream(false, function(twitchPlayer) {
+        $("#twitchContainer").append(twitchPlayer);
+    });
+
+    //init datepickers
+    $('#datetimepicker1').datetimepicker();
+    $('#datetimepicker2').datetimepicker();
 }
 </script>
 {% endblock %}
