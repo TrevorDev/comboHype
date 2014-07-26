@@ -15,6 +15,9 @@
         </div>
     </div>
     <div class="row">
+        <h1 id="streamName">
+
+        </h1>
         <div id="streamDescription">
 
         </div>
@@ -169,11 +172,12 @@ function homeCtrl($scope, $http) {
         //location.reload();
     }
 
-    $scope.changeStreamEmbeded = function(streamUrl, description) {
+    $scope.changeStreamEmbeded = function(streamUrl, eventName, description) {
         var channelName = getChannelName(streamUrl);
         var twitchPlayer = buildEmbedPlayer(true, false, channelName);
         $("#twitchContainer").html(twitchPlayer);
         description = description == null ? "" : description;
+        $("#streamName").html(eventName);
         $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
     }
 
@@ -195,7 +199,7 @@ function homeCtrl($scope, $http) {
                 // create the event object for the calendar
                 events.push({
                     id: result.id,
-                    title: result.gameName,
+                    title: result.gameName + " - " + result.name,
                     start: new Date(result.startTime).toString(),
                     end: new Date(result.endTime).toString()
                 });
@@ -243,7 +247,7 @@ function homeCtrl($scope, $http) {
                 $scope.showModal();
             },
             eventClick: function(calEvent, jsEvent, view) {
-                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, [calEvent.id].description);
+                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description);
 
                 // scroll to the top
                 $("html, body").animate({
