@@ -21,6 +21,9 @@
         <pre id="streamDescription">
 
         </pre>
+        <div id="tweetEmbed">
+					
+		</div>
         <div>
             <div class="col-md-10">
                 <h1>Coming Up Events:</h1>
@@ -136,7 +139,18 @@
             <div id="calendar" style="padding:50px">
 
             </div>
-
+            
+            <!-- Social Media -->
+            <div style="text-align:center">
+				<!-- Facebook Recommend/Share -->
+				<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Ffacebook.com%2Fcombohype&amp;width&amp;layout=standard&amp;action=recommend&amp;show_faces=true&amp;share=true&amp;height=80&amp;appId=166823070123401" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:80px;" allowTransparency="true"></iframe>
+				<!-- Twitter -->
+				<div style="vertical-align: top; display: inline-block;">
+					<!-- Follow -->
+					<a href="https://twitter.com/combohype" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @twitterapi</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				</div>
+			</div>
         </div>
     </div>
 </div>
@@ -190,6 +204,10 @@ function homeCtrl($scope, $http, $location) {
         description = description == null ? "" : description;
         $("#streamName").html(eventName);
         $("#streamDescription").html("Stream: <a href='" + streamUrl + "' >" + streamUrl + "</a><br>Time: " + moment(startTime).format("hh:mm A") + endTimeString + "<br>" + description);
+        
+        var defaultTweetText = "Watching " + eventName + " through Combo Hype!";
+        var tweetEmbed = "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?text=" + defaultTweetText + "' style='width:130px; height:20px;'></iframe>";
+        $("#tweetEmbed").html(tweetEmbed);
     }
 
     $scope.showModal = function() {
