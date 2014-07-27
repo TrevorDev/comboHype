@@ -10,7 +10,7 @@
                 <h4>Currently Live Events</h4>
             </div>
             <div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-                <a ng-click="changeStreamEmbeded(item.streamUrl, item.startTime, item.endTime, item.name, item.description)">[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
+                <a ng-click="changeStreamEmbeded(item.streamUrl, item.startTime, item.endTime, item.name, item.description,item.id)">[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
             </div>
         </div>
     </div>
@@ -147,7 +147,7 @@
 <script src="/public/vendor/jquery/jqueryTypeahead.js"></script>
 <script src="/public/custom/js/dropdownHandler.js"></script>
 <script type="text/javascript">
-function homeCtrl($scope, $http) {
+function homeCtrl($scope, $http, $location) {
     // Events shown at top
     $scope.currentEvents = [];
 
@@ -173,7 +173,7 @@ function homeCtrl($scope, $http) {
         //location.reload();
     }
 
-    $scope.changeStreamEmbeded = function(streamUrl, startTime, endTime, eventName, description) {
+    $scope.changeStreamEmbeded = function(streamUrl, startTime, endTime, eventName, description, eventID) {
         var channelName = getChannelName(streamUrl);
         var twitchPlayer = buildEmbedPlayer(true, false, channelName);
         var endTimeString = "";
@@ -181,6 +181,10 @@ function homeCtrl($scope, $http) {
         if(endTime != null) {
 			endTimeString = " - " + moment(endTime).format("hh:mm A");
 		}
+
+        if(eventID){
+            history.pushState(null, null, '/event/'+eventID);
+        }
         
         $("#twitchContainer").html(twitchPlayer);
         description = description == null ? "" : description;
@@ -254,7 +258,7 @@ function homeCtrl($scope, $http) {
                 $scope.showModal();
             },
             eventClick: function(calEvent, jsEvent, view) {
-                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].startTime, $scope.events[calEvent.id].endTime, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description);
+                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].startTime, $scope.events[calEvent.id].endTime, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description, $scope.events[calEvent.id].id);
 
                 // scroll to the top
                 $("html, body").animate({
@@ -289,20 +293,45 @@ function homeCtrl($scope, $http) {
         })
     }
 
+    var initGameStream = function() {
+        var pageEventRegexMatch = /event\/([0-9]+)/g.exec(document.URL);
+        console.log(pageEventRegexMatch)
+        if(pageEventRegexMatch && pageEventRegexMatch.length == 2){
+            //Specific stream url found
+            var pageEventId = parseInt(pageEventRegexMatch[1]);
+            $http.get('/api/event/'+pageEventId).
+            success(function(resp, status, headers, config) {
+                var ev = resp.data.result
+                if(ev){
+                    $scope.changeStreamEmbeded(ev.streamUrl, ev.startTime, ev.endTime, ev.name, ev.description)
+                    // scroll to the top
+                    $("html, body").animate({
+                        scrollTop: 0
+                    }, "slow");
+                }
+            }).
+            error(function(data, status, headers, config) {})
+        }else{
+            //default to init top game stream
+            getTopGameStream(false, function(twitchPlayer) {
+                $("#twitchContainer").append(twitchPlayer);
+            });
+        }
+    }
+
     //MAIN ----------------------------------------------------------------------------
     initDropdownTimezone()
     initCurrentEvents()
     initCalendar()
     initDropdownGameFilter();
-
-    //init game stream
-    getTopGameStream(false, function(twitchPlayer) {
-        $("#twitchContainer").append(twitchPlayer);
-    });
+    initGameStream();
+    
 
     //init datepickers
     $('#datetimepicker1').datetimepicker();
     $('#datetimepicker2').datetimepicker();
+
+    
 }
 </script>
 {% endblock %}

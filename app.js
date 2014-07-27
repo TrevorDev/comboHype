@@ -36,6 +36,7 @@ app.use(router(app))
 
 //PAGE ROUTES
 app.get('/', defaultPageLoad('index'))
+app.get('/event/:id', defaultPageLoad('index'))
 app.get('/about', defaultPageLoad('about'))
 app.get(/\/public\/*/, serve('.'))
 
