@@ -10,7 +10,7 @@
                 <h4>Currently Live Events</h4>
             </div>
             <div class="well" style="width:100%;" ng-repeat="item in currentEvents">
-                <a ng-click="changeStreamEmbeded(item.streamUrl, item.description)">[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
+                <a ng-click="changeStreamEmbeded(item.streamUrl, item.startTime, item.endTime, item.name, item.description)">[[item.name]] - [[item.gameName]]<br><div style="float:right">[[item.startTime | date:'h:mma']] - [[item.endTime | date:'h:mma']]</div></a>
             </div>
         </div>
     </div>
@@ -173,13 +173,19 @@ function homeCtrl($scope, $http) {
         //location.reload();
     }
 
-    $scope.changeStreamEmbeded = function(streamUrl, eventName, description) {
+    $scope.changeStreamEmbeded = function(streamUrl, startTime, endTime, eventName, description) {
         var channelName = getChannelName(streamUrl);
         var twitchPlayer = buildEmbedPlayer(true, false, channelName);
+        var endTimeString = "";
+        
+        if(endTime != null) {
+			endTimeString = " - " + moment(endTime).format("hh:mm A");
+		}
+        
         $("#twitchContainer").html(twitchPlayer);
         description = description == null ? "" : description;
         $("#streamName").html(eventName);
-        $("#streamDescription").html("Stream: " + streamUrl + "<br>" + description);
+        $("#streamDescription").html("Stream: <a href='" + streamUrl + "' >" + streamUrl + "</a><br>Time: " + moment(startTime).format("hh:mm A") + endTimeString + "<br>" + description);
     }
 
     $scope.showModal = function() {
@@ -248,7 +254,7 @@ function homeCtrl($scope, $http) {
                 $scope.showModal();
             },
             eventClick: function(calEvent, jsEvent, view) {
-                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description);
+                $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].startTime, $scope.events[calEvent.id].endTime, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description);
 
                 // scroll to the top
                 $("html, body").animate({
