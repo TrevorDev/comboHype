@@ -34,6 +34,14 @@ exports.where = function * (params) {
 	return scope
 }
 
+exports.create = function * (params) {
+	var dup = yield Event.findAll({where: {name: params.name, startTime: params.startTime}, limit: 1});
+	if(dup && dup.length >= 1){
+		return {errorStatus: 409, msg: "duplicate event"}
+	}
+	return params;
+}
+
 exports.get = function * (params) {
 	var scope = {}
 
