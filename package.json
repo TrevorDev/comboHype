@@ -33,7 +33,10 @@
 		"koa-send": "x.x",
 		"koa-cors": "x.x",
 		"stripe": "x.x",
-		"cron": "x.x"
+		"cron": "x.x",
+		"soupselect": "x.x",
+		"htmlparser": "x.x",
+		"async": "x.x"
 	},
 	"testing": "mocha"
 }
