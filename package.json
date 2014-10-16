@@ -32,7 +32,8 @@
 		"co-busboy": "x.x",
 		"koa-send": "x.x",
 		"koa-cors": "x.x",
-		"stripe": "x.x"
+		"stripe": "x.x",
+		"cron": "x.x"
 	},
 	"testing": "mocha"
 }
