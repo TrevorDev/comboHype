@@ -1,0 +1,5 @@
+body {
+    background-image: url('/public/custom/img/sf4-ken.jpg'), url('/public/custom/img/sf4-ryu-punch.jpg'); 
+    background-repeat:no-repeat, no-repeat; 
+    background-position: -335px 50px, 1240px 50px;
+}
