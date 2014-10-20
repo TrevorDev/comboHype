@@ -11,7 +11,7 @@
 		"koa-json-response": "x.x",
 		"socket.io": "x.x",
 		"sequelize": "x.x",
-		"request": "x.x",
+		"co-request": "x.x",
 		"thunkify": "x.x",
 		"co": "x.x",
 		"nodemailer": "x.x",
@@ -35,7 +35,8 @@
 		"stripe": "x.x",
 		"cron": "x.x",
 		"soupselect": "x.x",
-		"htmlparser": "x.x",
+		"htmlparser2": "x.x",
+		"bluebird": "x.x",
 		"async": "x.x"
 	},
 	"testing": "mocha"

@@ -215,7 +215,7 @@ function homeCtrl($scope, $http, $location) {
     }
 
     var updateCalendar = function(gameName) {
-        $http.get('/api/event/search?orderBy=id&sortOrder=DESC&gameName=' + gameName).
+        $http.get('/api/event/search?limit=500&orderBy=id&sortOrder=DESC&gameName=' + gameName).
         success(function(resp, status, headers, config) {
             //console.log(resp.data.results)
 
@@ -258,7 +258,7 @@ function homeCtrl($scope, $http, $location) {
     }
 
     var initCurrentEvents = function() {
-        $http.get('/api/event/search?orderBy=id&sortOrder=DESC&liveDuring=' + new Date().getTime()).
+        $http.get('/api/event/search?limit=100&orderBy=id&sortOrder=DESC&liveDuring=' + new Date().getTime()).
         success(function(resp, status, headers, config) {
             $scope.currentEvents = resp.data.results
         }).

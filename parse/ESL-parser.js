@@ -1,137 +1,76 @@
+var co = require('co');
+var Promise = require('bluebird');
 var select = require('soupselect').select,
-    htmlparser = require("htmlparser"),
-    request = require("request"),
-    sys = require('sys'),
-    util = require('util'),
-    async = require('async');
+    htmlparser = require("htmlparser2"),
+    request = require("co-request"),
+    sys = require('sys')
 
-var options = {
-  hostname: 'en.esl.tv',
-  port: 80,
-  path: '/schedule/',
-  method: 'GET'
-};
+var schedUrl = "http://en.esl.tv";
+co(function *(){
+    var resp = yield request(schedUrl+"/schedule")
+    var dom = yield getDom(resp.body);
+    var eventsSummary = select(dom, 'dt.vevent');
+    for(var i = 0;i<eventsSummary.length;i++){
+        try{
+             var eventObject = {}
+            var topNode = eventsSummary[i]
+            var eventNode = select(topNode, 'div.vevent_inner');
 
-var timeBetweenRequests = 2000;
-var timeWait = 0;
 
-request("http://en.esl.tv/schedule/", function(error, response, body) {
+            var nameElement = select(eventNode, 'div.schedule_list_title');
+            eventObject.name =  nameElement[0].children[0].data;
+            
+            var gameElement = select(eventNode, 'div.schedule_list_game');
+            eventObject.gameName =  gameElement[0].children[0].data;
 
-        var handler = new htmlparser.DefaultHandler(function(err, dom) {
-            if (err) {
-                sys.debug("Error: " + err);
-            } else {
-                var eventsSummary = select(dom, 'dt.vevent');
-                
-                console.log("Events from ESL");
-                async.forEach(eventsSummary, function(topNode, callback) {
-                    var schedulePage = topNode.children[1].attribs.href;
-                    console.log("Schedule Page: " + schedulePage);
-                    
-                    var eventInfo = {};
-                    
-                    timeWait = timeWait + timeBetweenRequests;
-                    setTimeout(function(){
-                        var req = request("http://en.esl.tv" + schedulePage, function(err2, response2, body2) {
-                            var handler2 = new htmlparser.DefaultHandler(function(err3, dom2) {
-                                var eventNode = select(topNode, 'div.vevent_inner');
-                                
-                                // parse event name
-                                var nameElement = select(eventNode, 'div.schedule_list_title');
-                                var eventTitle =  nameElement[0].children[0].raw;
-                                eventInfo.name = eventTitle;
-                                console.log("Event Name: " + eventTitle);
-                                
-                                // parse game name
-                                var gameElement = select(eventNode, 'div.schedule_list_game');
-                                var eventGame =  gameElement[0].children[0].raw;
-                                console.log("Game Name: " + eventGame);
-                                
-                                // parse date time
-                                var dateTimeElement = select(eventNode, 'span.dateLong');
-                                var eventDateTime =  dateTimeElement[0].children[0].raw;
-                                console.log("Date Time: " + eventDateTime);
-                                
-                                
-                                //console.log("- " + util.inspect(nameElement, false, null) + "\n");
-                                console.log("\n");
-                                
-                                var channelElement = select(dom2, 'div.schedule_detail_channel');
-                                var eventLink =  channelElement[0].children[1].attribs.href;
-                                
-                                
-                                //console.log("- " + util.inspect(nameElement, false, null) + "\n");
-                                console.log("\n");
-                                
-                                var req = request(eventLink, function(err3, response3, body3) {
-                                    var handler3 = new htmlparser.DefaultHandler(function(err4, dom3) {
-                                        console.log("Event Link: " + eventLink);
-                                        var twitchElement = select(dom3, '#live_embed_player_flash');
-                                        console.log("- " + util.inspect(twitchElement, false, null) + "\n");
-                                        var twitchLink =  twitchElement[0].attribs.data;
-                                        
-                                        console.log("twitch Link: " + twitchLink);
-                                        
-                                        var channelName = twitchLink.substring(twitchLink.indexOf("channel=") + "channel=".length); 
-                                        
-                                        console.log("Channel name: " + channelName);
-                                        callback();
-                                    });
-                                    var parser3 = new htmlparser.Parser(handler3);
-                                    parser3.parseComplete(body3);
-                                });
-                            });
-                            var parser2 = new htmlparser.Parser(handler2);
-                            parser2.parseComplete(body2);
-                        });
-                    }, timeWait);
+            var dateTimeElement = select(eventNode, 'span.dateLong');
+            eventObject.startTime =  dateTimeElement[0].children[0].data;
 
-                });
-                console.log('done');
+            var schedulePage = topNode.children[1].attribs.href;
+            var resp = yield request(schedUrl + schedulePage)
+            var dom = yield getDom(resp.body);
+            var channelElement = select(dom, 'div.schedule_detail_channel');
+            var eventLink =  channelElement[0].children[1].attribs.href;
+            {
+                var resp = yield request(eventLink)
+                var dom = yield getDom(resp.body);
+                var twitchElement = select(dom, '#live_embed_player_flash');
+                eventObject.streamUrl =  twitchElement[0].attribs.data;
+                eventObject.channelName = eventObject.streamUrl.substring(eventObject.streamUrl.indexOf("channel=") + "channel=".length);
+            }
+            var gameEvent = new GameEvent(eventObject.name, eventObject.startTime, null, "http://www.twitch.tv/"+ eventObject.channelName, eventObject.gameName, "")
+            var addResp = yield request({
+                uri: 'http://combohype.com/api/event',
+                method: 'POST',
+                form: gameEvent
+              });
+            console.log(gameEvent)
+        }catch(e){
+            console.log("bad parse"+e)
+        }
+    }
+})()
+
+var getDom = function(html){
+    return new Promise(function(resolve, reject) {
+        var handler = new htmlparser.DomHandler(function (error, dom) {
+            if(error){
+                reject(error)
+            }else{
+                resolve(dom)
             }
         });
-        
-        
-
         var parser = new htmlparser.Parser(handler);
-        parser.parseComplete(body);
+        parser.write(html);
+        parser.done();
+      })
+}
 
-});
-
-/*
-
-var req = request("http://en.esl.tv" + "/schedule/9611/", function(err2, response2, body2) {
-        var handler2 = new htmlparser.DefaultHandler(function(err3, dom2) {
-            //console.log("- " + util.inspect(dom2, false, null) + "\n");
-            
-            var channelElement = select(dom2, 'div.schedule_detail_channel');
-            var eventLink =  channelElement[0].children[1].attribs.href;
-            console.log("Event Link: " + eventLink);
-            
-            //console.log("- " + util.inspect(nameElement, false, null) + "\n");
-            console.log("\n");
-            
-            var req = request("http://en.esl.tv/channel/omgimsue/", function(err3, response3, body3) {
-                var handler3 = new htmlparser.DefaultHandler(function(err4, dom3) {
-                    var twitchElement = select(dom3, '#live_embed_player_flash');
-                    var twitchLink =  twitchElement[0].attribs.data;
-                    
-                    console.log("Event Link: " + twitchLink);
-                    
-                    var channelName = twitchLink.substring(twitchLink.indexOf("channel=") + "channel=".length); 
-                    
-                    console.log("Channel name: " + channelName);
-                    
-                });
-                var parser3 = new htmlparser.Parser(handler3);
-                parser3.parseComplete(body3);
-            });
-
-            
-            
-        });
-        var parser2 = new htmlparser.Parser(handler2);
-        parser2.parseComplete(body2);
-});
-*/
-
+function GameEvent(name, startTime, endTime, streamUrl, gameName, description){
+    this.name = name
+    this.startTime = new Date(startTime)
+    this.endTime = new Date(endTime)
+    this.streamUrl = streamUrl
+    this.gameName = gameName
+    this.description = description
+}
