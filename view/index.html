@@ -182,8 +182,15 @@ function homeCtrl($scope, $http, $location) {
         var game = new GameEvent(values.eventName, values.startDate, values.endDate, values.streamUrlField, values.gameName, values.descriptionField)
         game.startTime.setHours(game.startTime.getHours() + diff);
         game.endTime.setHours(game.endTime.getHours() + diff);
-        $http.post('/api/event', game);
+        $http.post('/api/event', game).
+          success(function(data, status, headers, config) {
+			alert("Event has been submitted and is pending approval!");
+		  }).
+		  error(function(data, status, headers, config) {
+			alert("Failed to submit event.");
+		  });;
         $scope.showModal();
+        
         //location.reload();
     }
 
