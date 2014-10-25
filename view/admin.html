@@ -1,7 +1,73 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-Admin page	
+<script type="text/javascript">
+    function approveEvent(elem, eventid) {
+        var btn = $(elem);
+        btn.text('Approving...');
+        var row = $( "tr[eventid='" + eventid + "']" );
+        var statusCell = row.find('td:eq(6)');
+        
+        // disable the buttons in this row
+        row.find("button").attr("disabled", true);
+    
+        /*
+        $http.get('/api/event/search?limit=500&orderBy=id&sortOrder=DESC&gameName=' + gameName).
+        success(function(resp, status, headers, config) {
+        }).
+        error(function(data, status, headers, config) {});*/
+        
+        // on success from ajax
+        row.toggleClass('warning success');
+        btn.text('Approved!');
+        statusCell.text("Approved");
+        
+        
+        // on failed from ajax
+        //btn.text('Failed to approve!');
+    }
+    
+    function rejectEvent(elem, eventid) {
+        var btn = $(elem);
+        btn.text('Rejecting...');
+        var row = $( "tr[eventid='" + eventid + "']" );
+        var statusCell = row.find('td:eq(6)');
+        
+        // disable buttons in the row
+        row.find("button").attr("disabled", true);
+        
+        
+        // on success from ajax
+        row.toggleClass('warning danger');
+        btn.text('Rejected!');
+        statusCell.text("Rejected");
+        
+        // on failed from ajax
+        //btn.text('Failed to reject!');
+    }
+    
+    function deleteEvent(elem, eventid) {
+        var btn = $(elem);
+        btn.text('Deleting...');
+        var row = $( "tr[eventid='" + eventid + "']" );
+        var statusCell = row.find('td:eq(6)');
+        
+        // disable buttons in the row
+        row.find("button").attr("disabled", true);
+        
+        
+        // on success from ajax
+        row.toggleClass('warning danger');
+        btn.text('Deleted!');
+        statusCell.text("Deleted");
+        
+        // on failed from ajax
+        //btn.text('Failed to delete!');
+    }
+
+</script>
+
+
 
 <div style="margin:20px">
     <h3>Events Pending Approval</h3>
@@ -15,19 +81,21 @@ Admin page
         <th>Game Name</th>
         <th>Description</th>
         <th>Status</th>
+        <th>Action</th>
     </tr>
   </thead>
   <tbody>
-    <tr class="warning">
+    <tr eventid="0" class="warning">
         <td class="vert-align">game</td>
         <td class="vert-align">start</td>
         <td class="vert-align">end</td>
         <td class="vert-align">http://twitch.tv/bah</td>
         <td class="vert-align">league of garbage</td>
         <td class="vert-align">description</td>
-        <td class="vert-align">pending approval 
-            <button type="button" class="btn btn-danger pull-right" style="margin-left:5px">Reject</button>
-            <button type="button" class="btn btn-success pull-right" style="margin-right:5px">Approve</button>
+        <td class="vert-align" style="width:200px">Pending Approval </td>
+        <td class="vert-align">
+            <button type="button" class="btn btn-success" style="margin-right:5px" onclick="approveEvent(this, 0);">Approve</button>
+            <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="rejectEvent(this, 0);">Reject</button>
         </td>
     </tr>
   </tbody>
@@ -44,18 +112,20 @@ Admin page
         <th>Game Name</th>
         <th>Description</th>
         <th>Status</th>
+        <th>Action</th>
     </tr>
   </thead>
   <tbody>
-    <tr class="success">
+    <tr eventid="1" class="success">
         <td class="vert-align">game</td>
         <td class="vert-align">start</td>
         <td class="vert-align">end</td>
         <td class="vert-align">http://twitch.tv/bah</td>
         <td class="vert-align">league of garbage</td>
         <td class="vert-align">description</td>
-        <td class="vert-align">approved 
-            <button type="button" class="btn btn-danger pull-right" style="margin-left:5px">Delete</button>
+        <td class="vert-align" style="width:200px">Approved</td>
+        <td class="vert-align">
+            <button type="button" class="btn btn-danger" style="margin-right:5px" onclick="deleteEvent(this, 1);">Delete</button>
         </td>
     </tr>
   </tbody>
