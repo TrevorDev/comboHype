@@ -2,8 +2,12 @@ var Event = require('./../model/event');
 
 exports.where = function * (params) {
 	var scope = {}
-
-	scope.status = Event.STATUS.ACTIVE;
+	if(!params.status){
+		scope.status = Event.STATUS.ACTIVE;
+	}else{
+		scope.status = params.status;
+	}
+	
 
 	if (params.minDate) {
 		scope.startTime = {
