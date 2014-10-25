@@ -3,4 +3,59 @@
 
 Admin page	
 
+<div style="margin:20px">
+    <h3>Events Pending Approval</h3>
+<table class="table table-bordered" id="eventsTable" style="padding-bottom:20px; margin-bottom:50px;">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Stream URL</th>
+        <th>Game Name</th>
+        <th>Description</th>
+        <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="warning">
+        <td>game</td>
+        <td>start</td>
+        <td>end</td>
+        <td>http://twitch.tv/bah</td>
+        <td>league of garbage</td>
+        <td>description</td>
+        <td>pending approval <button type="button" class="btn btn-primary">Approve</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Events Approved</h3>
+<table class="table table-bordered" id="eventsTable">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Stream URL</th>
+        <th>Game Name</th>
+        <th>Description</th>
+        <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr  class="success">
+        <td>game</td>
+        <td>start</td>
+        <td>end</td>
+        <td>http://twitch.tv/bah</td>
+        <td>league of garbage</td>
+        <td>description</td>
+        <td>approved</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
 {% endblock %}
