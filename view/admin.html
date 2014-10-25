@@ -65,6 +65,76 @@
         //btn.text('Failed to delete!');
     }
 
+    function createPendingHTMLRow(index, name, start, end, url, gameName, description, status) {
+        var startFormatted = moment(start).format('MMMM Do YYYY, h:mm:ss a');
+        var endFormatted = moment(end).format('MMMM Do YYYY, h:mm:ss a');
+
+        var row = '<tr eventid="' + index + '" class="warning"> \
+            <td class="vert-align">' + name + '</td> \
+            <td class="vert-align">' + startFormatted + '</td> \
+            <td class="vert-align">' + endFormatted + '</td> \
+            <td class="vert-align">' + url + '</td> \
+            <td class="vert-align">' + gameName + '</td> \
+            <td class="vert-align">' + description + '</td> \
+            <td class="vert-align" style="min-width:200px">' + status + '</td> \
+            <td class="vert-align" style="min-width:200px"> \
+                <button type="button" class="btn btn-success" style="margin-right:5px" onclick="approveEvent(this, ' + index + ');">Approve</button> \
+                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="rejectEvent(this, ' +index + ');">Reject</button> \
+            </td> \
+        </tr>';
+        return row;
+    }
+    
+    function createApprovedHTMLRow(index, name, start, end, url, gameName, description, status) {
+        var startFormatted = moment(start).format('MMMM Do YYYY, h:mm:ss a');
+        var endFormatted = moment(end).format('MMMM Do YYYY, h:mm:ss a');
+        
+        var row = '<tr eventid="' + index + '" class="success"> \
+            <td class="vert-align">' + name + '</td> \
+            <td class="vert-align">' + startFormatted + '</td> \
+            <td class="vert-align">' + endFormatted + '</td> \
+            <td class="vert-align">' + url + '</td> \
+            <td class="vert-align">' + gameName + '</td> \
+            <td class="vert-align">' + description + '</td> \
+            <td class="vert-align" style="min-width:200px">' + status + '</td> \
+            <td class="vert-align" style="min-width:200px"> \
+                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="deleteEvent(this, ' +index + ');">Delete</button> \
+            </td> \
+        </tr>';
+        return row;
+    }
+
+$( document ).ready(function() {
+
+    // load events into html
+
+    // TODO: replace this
+    var jsonEvents = $.parseJSON('{"status":"success","data":{"results":[{"id":33,"name":"BMC EU Winter Grand Final(+3rd place match)","startTime":"2014-12-10T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:37.000Z","updatedAt":"2014-10-20T21:13:37.000Z"},{"id":32,"name":"BMC NA Winter Grand Final(+3rd place match)","startTime":"2014-12-10T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:34.000Z","updatedAt":"2014-10-20T21:13:34.000Z"},{"id":31,"name":"BMC EU Winter Semifinals","startTime":"2014-12-04T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:30.000Z","updatedAt":"2014-10-20T21:13:30.000Z"},{"id":30,"name":"BMC NA Winter Semifinals","startTime":"2014-12-04T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:27.000Z","updatedAt":"2014-10-20T21:13:27.000Z"},{"id":29,"name":"BMC NA Winter Quarterfinals 2","startTime":"2014-12-02T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:23.000Z","updatedAt":"2014-10-20T21:13:23.000Z"},{"id":28,"name":"BMC EU Winter Quarterfinals 2","startTime":"2014-12-01T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:19.000Z","updatedAt":"2014-10-20T21:13:19.000Z"},{"id":27,"name":"BMC NA Winter Quarterfinals 1","startTime":"2014-11-27T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:16.000Z","updatedAt":"2014-10-20T21:13:16.000Z"},{"id":26,"name":"BMC EU Winter Quarterfinals 1","startTime":"2014-11-25T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:13.000Z","updatedAt":"2014-10-20T21:13:13.000Z"},{"id":25,"name":"BMC NA Winter Group D","startTime":"2014-11-25T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:09.000Z","updatedAt":"2014-10-20T21:13:09.000Z"},{"id":24,"name":"Finals, Day #2 - ESL One Battlefield 4","startTime":"2014-11-23T11:30:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_bf4","gameName":"Battlefield 4","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:06.000Z","updatedAt":"2014-10-20T21:13:06.000Z"},{"id":23,"name":"Finals, Day #1 - ESL One Battlefield 4","startTime":"2014-11-22T11:30:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_bf4","gameName":"Battlefield 4","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:13:02.000Z","updatedAt":"2014-10-20T21:13:02.000Z"},{"id":22,"name":"BMC EU Winter Group D","startTime":"2014-11-20T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:59.000Z","updatedAt":"2014-10-20T21:12:59.000Z"},{"id":21,"name":"BMC NA Winter Group C","startTime":"2014-11-20T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:55.000Z","updatedAt":"2014-10-20T21:12:55.000Z"},{"id":20,"name":"BMC EU Winter Group C","startTime":"2014-11-18T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:52.000Z","updatedAt":"2014-10-20T21:12:52.000Z"},{"id":19,"name":"BMC NA Winter Group B","startTime":"2014-11-18T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:48.000Z","updatedAt":"2014-10-20T21:12:48.000Z"},{"id":18,"name":"BMC EU Winter Group B","startTime":"2014-11-13T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:44.000Z","updatedAt":"2014-10-20T21:12:44.000Z"},{"id":17,"name":"BMC NA Winter Group A","startTime":"2014-11-13T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:40.000Z","updatedAt":"2014-10-20T21:12:40.000Z"},{"id":16,"name":"BMC EU Winter Group A","startTime":"2014-11-11T17:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:36.000Z","updatedAt":"2014-10-20T21:12:36.000Z"},{"id":15,"name":"BMC NA Winter Qualifier Four","startTime":"2014-11-11T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:32.000Z","updatedAt":"2014-10-20T21:12:32.000Z"},{"id":14,"name":"DSCL Bootcamp Qualifier #6","startTime":"2014-11-05T18:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/dscleague","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:12:13.000Z","updatedAt":"2014-10-20T21:12:13.000Z"},{"id":13,"name":"Group Go4 - ESL One Battlefield 4","startTime":"2014-11-05T18:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_bf4","gameName":"Battlefield 4","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:11:40.000Z","updatedAt":"2014-10-20T21:11:40.000Z"},{"id":12,"name":"BMC NA Winter Qualifier Two","startTime":"2014-11-05T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:11:31.000Z","updatedAt":"2014-10-20T21:11:31.000Z"},{"id":11,"name":"Group C - ESL One Battlefield 4","startTime":"2014-11-04T18:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_bf4","gameName":"Battlefield 4","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:11:27.000Z","updatedAt":"2014-10-20T21:11:27.000Z"},{"id":10,"name":"DSCL Bootcamp Qualifier #5","startTime":"2014-11-02T13:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/dscleague","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:11:17.000Z","updatedAt":"2014-10-20T21:11:17.000Z"},{"id":9,"name":"BMC NA Winter Qualifier One","startTime":"2014-10-31T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"PENDING_APPROVAL","createdAt":"2014-10-20T21:11:13.000Z","updatedAt":"2014-10-20T21:11:13.000Z"},{"id":8,"name":"DSCL Bootcamp Qualifier #4","startTime":"2014-10-29T18:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/dscleague","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:11:10.000Z","updatedAt":"2014-10-20T21:11:10.000Z"},{"id":7,"name":"BMC NA Fall Grand Final(+3rd place match)","startTime":"2014-10-28T01:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:10:52.000Z","updatedAt":"2014-10-20T21:10:52.000Z"},{"id":6,"name":"DSCL Bootcamp Qualifier #3","startTime":"2014-10-26T13:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/dscleague","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:10:49.000Z","updatedAt":"2014-10-20T21:10:49.000Z"},{"id":5,"name":"BMC NA Fall Semifinals","startTime":"2014-10-24T00:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_lol","gameName":"League of Legends","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:10:46.000Z","updatedAt":"2014-10-20T21:10:46.000Z"},{"id":4,"name":"European Qualifier - IEM San Jose","startTime":"2014-10-19T12:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_sc2","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:10:21.000Z","updatedAt":"2014-10-20T21:10:21.000Z"},{"id":3,"name":"European Qualifier - IEM San Jose","startTime":"2014-10-19T12:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://www.twitch.tv/esltv_sc2","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"ACTIVE","createdAt":"2014-10-20T21:08:42.000Z","updatedAt":"2014-10-20T21:08:42.000Z"},{"id":2,"name":"European Qualifier - IEM San fdJose","startTime":"2014-10-19T12:00:00.000Z","endTime":"1970-01-01T00:00:00.000Z","streamUrl":"http://en.twitch.tv/widgets/live_embed_player.swf?channel=esltv_sc2","gameName":"StarCraft II: Heart of the Swarm","description":"","status":"PENDING_APPROVAL","createdAt":"2014-10-20T21:02:05.000Z","updatedAt":"2014-10-20T21:02:05.000Z"},{"id":1,"name":"test","startTime":"2014-10-23T04:00:00.000Z","endTime":null,"streamUrl":"http://www.twitch.tv/vgbootcamp","gameName":"melee","description":"","status":"PENDING_APPROVAL","createdAt":"2014-10-05T18:24:14.000Z","updatedAt":"2014-10-05T18:24:14.000Z"}]}}');
+
+
+    // comparison method for sorting - can probably be done in query
+    function comp(a, b) {
+        return moment(a.createdAt).unix() - moment(b.createdAt).unix();
+    }
+    
+    var results = jsonEvents.data.results;
+    // sort events by date created
+    results.sort(comp);
+
+    $.each(results, function(i, event) {
+        console.log("event[" + i + "]: " + event.endTime);
+        if(event.status == "ACTIVE") {
+            var htmlRow = createApprovedHTMLRow(i, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
+            $("#approvedEventsTable").append(htmlRow);
+        }
+        else if(event.status == "PENDING_APPROVAL") {
+            var htmlRow = createPendingHTMLRow(i, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
+            $("#pendingEventsTable").append(htmlRow);
+        }
+    });
+
+});
+
 </script>
 
 
@@ -74,17 +144,18 @@
 <table class="table table-bordered" id="pendingEventsTable" style="padding-bottom:20px; margin-bottom:50px;">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Stream URL</th>
-        <th>Game Name</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Start</th>
+        <th class="text-center">End</th>
+        <th class="text-center">Stream URL</th>
+        <th class="text-center">Game Name</th>
+        <th class="text-center">Description</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Action</th>
     </tr>
   </thead>
   <tbody>
+<!--
     <tr eventid="0" class="warning">
         <td class="vert-align">game</td>
         <td class="vert-align">start</td>
@@ -93,11 +164,12 @@
         <td class="vert-align">league of garbage</td>
         <td class="vert-align">description</td>
         <td class="vert-align" style="width:200px">Pending Approval </td>
-        <td class="vert-align">
+        <td class="vert-align" style="min-width:200px">
             <button type="button" class="btn btn-success" style="margin-right:5px" onclick="approveEvent(this, 0);">Approve</button>
             <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="rejectEvent(this, 0);">Reject</button>
         </td>
     </tr>
+-->
   </tbody>
 </table>
 
@@ -105,18 +177,20 @@
 <table class="table table-bordered" id="approvedEventsTable" style="padding-bottom:20px; margin-bottom:50px;">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Stream URL</th>
-        <th>Game Name</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Start</th>
+        <th class="text-center">End</th>
+        <th class="text-center">Stream URL</th>
+        <th class="text-center">Game Name</th>
+        <th class="text-center">Description</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">Action</th>
     </tr>
   </thead>
   <tbody>
+<!--
     <tr eventid="1" class="success">
+
         <td class="vert-align">game</td>
         <td class="vert-align">start</td>
         <td class="vert-align">end</td>
@@ -124,10 +198,12 @@
         <td class="vert-align">league of garbage</td>
         <td class="vert-align">description</td>
         <td class="vert-align" style="width:200px">Approved</td>
-        <td class="vert-align">
+        <td class="vert-align" style="min-width:200px">
             <button type="button" class="btn btn-danger" style="margin-right:5px" onclick="deleteEvent(this, 1);">Delete</button>
         </td>
+
     </tr>
+-->
   </tbody>
 </table>
 
