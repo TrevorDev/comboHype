@@ -5,7 +5,7 @@ Admin page
 
 <div style="margin:20px">
     <h3>Events Pending Approval</h3>
-<table class="table table-bordered" id="eventsTable" style="padding-bottom:20px; margin-bottom:50px;">
+<table class="table table-bordered" id="pendingEventsTable" style="padding-bottom:20px; margin-bottom:50px;">
     <thead>
     <tr>
         <th>Name</th>
@@ -19,19 +19,22 @@ Admin page
   </thead>
   <tbody>
     <tr class="warning">
-        <td>game</td>
-        <td>start</td>
-        <td>end</td>
-        <td>http://twitch.tv/bah</td>
-        <td>league of garbage</td>
-        <td>description</td>
-        <td>pending approval <button type="button" class="btn btn-primary">Approve</button></td>
+        <td class="vert-align">game</td>
+        <td class="vert-align">start</td>
+        <td class="vert-align">end</td>
+        <td class="vert-align">http://twitch.tv/bah</td>
+        <td class="vert-align">league of garbage</td>
+        <td class="vert-align">description</td>
+        <td class="vert-align">pending approval 
+            <button type="button" class="btn btn-danger pull-right" style="margin-left:5px">Reject</button>
+            <button type="button" class="btn btn-success pull-right" style="margin-right:5px">Approve</button>
+        </td>
     </tr>
   </tbody>
 </table>
 
 <h3>Events Approved</h3>
-<table class="table table-bordered" id="eventsTable">
+<table class="table table-bordered" id="approvedEventsTable" style="padding-bottom:20px; margin-bottom:50px;">
     <thead>
     <tr>
         <th>Name</th>
@@ -44,14 +47,16 @@ Admin page
     </tr>
   </thead>
   <tbody>
-    <tr  class="success">
-        <td>game</td>
-        <td>start</td>
-        <td>end</td>
-        <td>http://twitch.tv/bah</td>
-        <td>league of garbage</td>
-        <td>description</td>
-        <td>approved</td>
+    <tr class="success">
+        <td class="vert-align">game</td>
+        <td class="vert-align">start</td>
+        <td class="vert-align">end</td>
+        <td class="vert-align">http://twitch.tv/bah</td>
+        <td class="vert-align">league of garbage</td>
+        <td class="vert-align">description</td>
+        <td class="vert-align">approved 
+            <button type="button" class="btn btn-danger pull-right" style="margin-left:5px">Delete</button>
+        </td>
     </tr>
   </tbody>
 </table>
