@@ -37,7 +37,7 @@ app.use(router(app))
 //PAGE ROUTES
 app.get('/', defaultPageLoad('index'))
 app.get('/login', defaultPageLoad('login'))
-app.get('/admin', defaultPageLoad('admin'))
+app.get('/admin', defaultPageLoad('admin', "admin"))
 app.get('/event/:id', defaultPageLoad('index'))
 app.get('/about', defaultPageLoad('about'))
 app.get(/\/public\/*/, serve('.'))
@@ -46,11 +46,17 @@ app.get(/\/public\/*/, serve('.'))
 app.post('/api/event', sequelease.create(eventModel, eventCtrl.create))
 app.get('/api/event/search', sequelease.where(eventModel, eventCtrl.where))
 app.get('/api/event/:id', sequelease.get(eventModel, eventCtrl.get))
-
+app.post('/api/login', login())
+app.post('/api/logout', login(true))
+app.get('/api/logout', login(true))
 
 //PAGE HANDLERS
 function defaultPageLoad(pageName, requiresLogin) {
 	return function * () {
+		if(requiresLogin && (this.session.userType != requiresLogin)){
+			this.redirect('/login')
+			return
+		}
 		/*if(requiresLogin===true && !sessionHelper.isLoggedIn(this.session)){
 			this.redirect('/login')
 			return
@@ -58,6 +64,22 @@ function defaultPageLoad(pageName, requiresLogin) {
 
 		var temp = {};
 		this.body = yield render(pageName, temp)
+	}
+}
+
+function login(logout) {
+	return function * () {
+		if(logout){
+			this.session = null;
+		}else{
+			var params = yield parse(this)
+			if(params.email=="admin@combohype.com" && params.password=="password12"){
+				console.log("hit")
+				this.session.userType = "admin"
+			}
+			
+		}
+		this.body = "test"
 	}
 }
 
