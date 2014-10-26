@@ -10,17 +10,26 @@
         
         // disable the buttons in this row
         row.find("button").attr("disabled", true);
-    
+
         /*
         $http.get('/api/event/search?limit=500&orderBy=id&sortOrder=DESC&gameName=' + gameName).
         success(function(resp, status, headers, config) {
         }).
         error(function(data, status, headers, config) {});*/
         
-        // on success from ajax
-        row.toggleClass('warning success');
-        btn.text('Approved!');
-        statusCell.text("Approved");
+        $.ajax({
+            url: "/api/event/"+eventid,
+            type: 'PUT',
+            data: {status: "ACTIVE"},
+            success: function(){
+                // on success from ajax
+                console.log("hit");
+                row.toggleClass('warning success');
+                btn.text('Approved!');
+                statusCell.text("Approved");
+            }            
+        })
+        
         
         
         // on failed from ajax
@@ -37,10 +46,18 @@
         row.find("button").attr("disabled", true);
         
         
-        // on success from ajax
-        row.toggleClass('warning danger');
-        btn.text('Rejected!');
-        statusCell.text("Rejected");
+        $.ajax({
+            url: "/api/event/"+eventid,
+            type: 'PUT',
+            data: {status: "DELETED"},
+            success: function(){
+                // on success from ajax
+                row.toggleClass('warning danger');
+                btn.text('Rejected!');
+                statusCell.text("Rejected");
+            }            
+        })
+        
         
         // on failed from ajax
         //btn.text('Failed to reject!');
@@ -55,21 +72,29 @@
         // disable buttons in the row
         row.find("button").attr("disabled", true);
         
+         $.ajax({
+            url: "/api/event/"+eventid,
+            type: 'PUT',
+            data: {status: "DELETED"},
+            success: function(){
+                 // on success from ajax
+                row.toggleClass('warning danger');
+                btn.text('Deleted!');
+                statusCell.text("Deleted");
+            }            
+        })
         
-        // on success from ajax
-        row.toggleClass('warning danger');
-        btn.text('Deleted!');
-        statusCell.text("Deleted");
+       
         
         // on failed from ajax
         //btn.text('Failed to delete!');
     }
 
-    function createPendingHTMLRow(index, name, start, end, url, gameName, description, status) {
+    function createPendingHTMLRow(index, id, name, start, end, url, gameName, description, status) {
         var startFormatted = moment(start).format('MMMM Do YYYY, h:mm:ss a');
         var endFormatted = moment(end).format('MMMM Do YYYY, h:mm:ss a');
 
-        var row = '<tr eventid="' + index + '" class="warning"> \
+        var row = '<tr eventid="' + id + '" class="warning"> \
             <td class="vert-align">' + name + '</td> \
             <td class="vert-align">' + startFormatted + '</td> \
             <td class="vert-align">' + endFormatted + '</td> \
@@ -78,18 +103,18 @@
             <td class="vert-align">' + description + '</td> \
             <td class="vert-align" style="min-width:200px">' + status + '</td> \
             <td class="vert-align" style="min-width:200px"> \
-                <button type="button" class="btn btn-success" style="margin-right:5px" onclick="approveEvent(this, ' + index + ');">Approve</button> \
-                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="rejectEvent(this, ' +index + ');">Reject</button> \
+                <button type="button" class="btn btn-success" style="margin-right:5px" onclick="approveEvent(this, ' + id + ');">Approve</button> \
+                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="rejectEvent(this, ' +id + ');">Reject</button> \
             </td> \
         </tr>';
         return row;
     }
     
-    function createApprovedHTMLRow(index, name, start, end, url, gameName, description, status) {
+    function createApprovedHTMLRow(index, id, name, start, end, url, gameName, description, status) {
         var startFormatted = moment(start).format('MMMM Do YYYY, h:mm:ss a');
         var endFormatted = moment(end).format('MMMM Do YYYY, h:mm:ss a');
         
-        var row = '<tr eventid="' + index + '" class="success"> \
+        var row = '<tr eventid="' + id + '" class="success"> \
             <td class="vert-align">' + name + '</td> \
             <td class="vert-align">' + startFormatted + '</td> \
             <td class="vert-align">' + endFormatted + '</td> \
@@ -98,7 +123,7 @@
             <td class="vert-align">' + description + '</td> \
             <td class="vert-align" style="min-width:200px">' + status + '</td> \
             <td class="vert-align" style="min-width:200px"> \
-                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="deleteEvent(this, ' +index + ');">Delete</button> \
+                <button type="button" class="btn btn-danger" style="margin-left:5px" onclick="deleteEvent(this, ' +id + ');">Delete</button> \
             </td> \
         </tr>';
         return row;
@@ -115,18 +140,18 @@ $( document ).ready(function() {
                 return moment(a.createdAt).unix() - moment(b.createdAt).unix();
             }
             
-            var results = pendingResp.data.results;
+            var results = pendingResp.data.results.concat(activeResp.data.results);
             // sort events by date created
             results.sort(comp);
 
             $.each(results, function(i, event) {
                 console.log("event[" + i + "]: " + event.endTime);
                 if(event.status == "ACTIVE") {
-                    var htmlRow = createApprovedHTMLRow(i, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
+                    var htmlRow = createApprovedHTMLRow(i, event.id, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
                     $("#approvedEventsTable").append(htmlRow);
                 }
                 else if(event.status == "PENDING_APPROVAL") {
-                    var htmlRow = createPendingHTMLRow(i, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
+                    var htmlRow = createPendingHTMLRow(i, event.id, event.name, event.startTime, event.endTime, event.streamUrl, event.gameName, event.description, event.status);
                     $("#pendingEventsTable").append(htmlRow);
                 }
             });

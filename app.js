@@ -46,6 +46,7 @@ app.get(/\/public\/*/, serve('.'))
 app.post('/api/event', sequelease.create(eventModel, eventCtrl.create))
 app.get('/api/event/search', sequelease.where(eventModel, eventCtrl.where))
 app.get('/api/event/:id', sequelease.get(eventModel, eventCtrl.get))
+app.put('/api/event/:id', sequelease.update(eventModel))
 app.post('/api/login', login())
 app.post('/api/logout', login(true))
 app.get('/api/logout', login(true))
@@ -76,6 +77,8 @@ function login(logout) {
 			if(params.email=="admin@combohype.com" && params.password=="password12"){
 				console.log("hit")
 				this.session.userType = "admin"
+				this.redirect('/admin')
+				return
 			}
 			
 		}

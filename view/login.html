@@ -5,7 +5,7 @@
 		<div class="row centered mt grid">
 			<div class="mt"></div>
 			<div class="col-lg-6">
-				<h1>Account Creation</h1>
+				<!-- <h1>Account Creation</h1>
 				<div style="display:inline-block;max-width:500px;width:100%;padding:50px;" id="green">
 				<form id="createAccount" class="form-horizontal" role="form">
 				  <div class="form-group">
@@ -23,9 +23,9 @@
 				  <div class="form-group">
 				    <div class="col-sm-offset-2 col-sm-10">
 				      <div class="checkbox">
-				        <label>
+				        <label> -->
 				          <!--<input name="remember" type="checkbox"> Remember me-->
-				        </label>
+				<!--         </label>
 				      </div>
 				    </div>
 				  </div>
@@ -34,7 +34,7 @@
 				      <button type="submit" class="btn btn-default">Create Account</button>
 				    </div>
 				  </div>
-				</form>
+				</form> -->
 			</div>
 			</div>
 			<div class="col-lg-6">
@@ -113,7 +113,7 @@ $("#login").submit(function() {
 	     data: $("#login").serialize(), 
 	     success: function(data)
 	     {
-	        window.location.replace(redirect || "/");
+	        window.location.replace(redirect || "/admin");
 	     },
 	     error: function(XMLHttpRequest, textStatus, errorThrown) {
 	     		submitting=0;
