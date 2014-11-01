@@ -93,17 +93,12 @@ function render(page, template) {
 var server = http.createServer(app.callback())
 
 //SOCKETIO
-var bonusUsers = 2
+var bonusUsers = 230
 
 function randomizeBonusUsers() {
 	si.query('SELECT 1')
 	setTimeout(randomizeBonusUsers, 3000000) //50 min
-	if(bonusUsers >= 2){
-		bonusUsers -= 1;
-	}else{
-		bonusUsers += 1;
-	}
-	
+	bonusUsers += 1;
 }
 randomizeBonusUsers()
 

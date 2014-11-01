@@ -7,3 +7,7 @@ body {
 .fc-view {
 	background-color: white;
 }
+
+.fc-widget-header, .fc-widget-content {
+border: 2px solid #9B9B9B;
+}
