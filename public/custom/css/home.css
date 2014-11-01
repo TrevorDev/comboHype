@@ -3,3 +3,7 @@ body {
     background-repeat:no-repeat, no-repeat; 
     background-position: -335px 50px, 1240px 50px;
 }
+
+.fc-view {
+	background-color: white;
+}
