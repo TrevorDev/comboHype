@@ -1,4 +1,5 @@
 var config = require('./lib/config')
+
 var database = require('./lib/database')
 var sequelease = require('./lib/sequelease')
 var logger = require('koa-logger')
@@ -15,6 +16,7 @@ var http = require('http')
 var request = require('request');
 var fs = require('fs')
 var cors = require('koa-cors')
+var email = require("./model/email");
 var app = koa()
 
 //Add database
@@ -50,6 +52,15 @@ app.put('/api/event/:id', sequelease.update(eventModel))
 app.post('/api/login', login())
 app.post('/api/logout', login(true))
 app.get('/api/logout', login(true))
+app.post('/api/notify', function*(){
+	var params = yield parse(this)
+	var curEvent = yield eventModel.find(params.id)
+	var text = curEvent.name+" is starting now! combohype.com/event/"+params.id;
+	console.log(text, curEvent.startTime)
+	yield email.create({status: email.STATUS.NOT_SENT, to: params.email, text: text, timeToSend: curEvent.startTime})
+	console.log(params)
+	this.jsonResp(200)
+})
 
 //PAGE HANDLERS
 function defaultPageLoad(pageName, requiresLogin) {

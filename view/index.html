@@ -19,6 +19,12 @@
         <h1 id="streamName">
 
         </h1>
+        <form class="form-inline" role="form" id="notify" ng-show="pageEventId > 0">
+          <div class="form-group">
+            <input type="email" class="form-control" id="notifyEmail" placeholder="Enter email">
+          </div>
+          <button type="submit" class="btn btn-primary">Notify Me When This Event Starts</button>
+        </form>
         <pre style="display:none;" id="streamDescription">
 
         </pre>
@@ -166,7 +172,7 @@
 function homeCtrl($scope, $http, $location) {
     // Events shown at top
     $scope.currentEvents = [];
-
+    $scope.pageEventId = null;
     // using a dictionary with id for events
     $scope.events = {};
 
@@ -206,6 +212,8 @@ function homeCtrl($scope, $http, $location) {
 		}
 
         if(eventID){
+            $scope.pageEventId = eventID
+            $scope.$apply()
             history.pushState(null, null, '/event/'+eventID);
         }
         
@@ -217,6 +225,7 @@ function homeCtrl($scope, $http, $location) {
         var defaultTweetText = "Watching " + eventName + " through Combo Hype!";
         var tweetEmbed = "<iframe allowtransparency='true' frameborder='0' scrolling='no' src='https://platform.twitter.com/widgets/tweet_button.html?text=" + defaultTweetText + "' style='width:130px; height:20px;'></iframe>";
         $("#tweetEmbed").html(tweetEmbed);
+
     }
 
     $scope.showModal = function() {
@@ -326,6 +335,7 @@ function homeCtrl($scope, $http, $location) {
         if(pageEventRegexMatch && pageEventRegexMatch.length == 2){
             //Specific stream url found
             var pageEventId = parseInt(pageEventRegexMatch[1]);
+            $scope.pageEventId = pageEventId
             $http.get('/api/event/'+pageEventId).
             success(function(resp, status, headers, config) {
                 var ev = resp.data.result
@@ -345,6 +355,15 @@ function homeCtrl($scope, $http, $location) {
             });
         }
     }
+
+    $("#notify").on("submit", function(){
+         $http.post('/api/notify', {email: $("#notifyEmail").val(), id: $scope.pageEventId}).
+          success(function(data, status, headers, config) {
+            alert("You will be emailed when the event starts!");
+          }).
+          error(function(data, status, headers, config) {
+          });;
+    })
 
     //MAIN ----------------------------------------------------------------------------
     initDropdownTimezone()

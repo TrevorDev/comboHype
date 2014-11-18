@@ -33,11 +33,14 @@
 		"koa-send": "x.x",
 		"koa-cors": "x.x",
 		"stripe": "x.x",
+		"request": "x.x",
 		"cron": "x.x",
 		"soupselect": "x.x",
 		"htmlparser2": "x.x",
 		"bluebird": "x.x",
-		"async": "x.x"
+		"nodemailer": "x.x",
+		"async": "x.x",
+		"nodemailer-sendgrid-transport": "x.x"
 	},
 	"testing": "mocha"
 }
