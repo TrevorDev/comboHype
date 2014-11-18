@@ -19,7 +19,7 @@
         <h1 id="streamName">
 
         </h1>
-        <form class="form-inline" role="form" id="notify" ng-show="pageEventId > 0">
+        <form class="form-inline" style="display: none;" role="form" id="notify">
           <div class="form-group">
             <input type="email" class="form-control" id="notifyEmail" placeholder="Enter email">
           </div>
@@ -212,9 +212,10 @@ function homeCtrl($scope, $http, $location) {
 		}
 
         if(eventID){
-            $scope.pageEventId = eventID
-            $scope.$apply()
+            
             history.pushState(null, null, '/event/'+eventID);
+            $scope.pageEventId = eventID
+            $("#notify").show();
         }
         
         $("#twitchContainer").html(twitchPlayer);
@@ -295,7 +296,6 @@ function homeCtrl($scope, $http, $location) {
             },
             eventClick: function(calEvent, jsEvent, view) {
                 $scope.changeStreamEmbeded($scope.events[calEvent.id].streamUrl, $scope.events[calEvent.id].startTime, $scope.events[calEvent.id].endTime, $scope.events[calEvent.id].name, $scope.events[calEvent.id].description, $scope.events[calEvent.id].id);
-
                 // scroll to the top
                 $("html, body").animate({
                     scrollTop: 0
